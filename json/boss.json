@@ -1,0 +1,387 @@
+{
+"lucilius": {
+"id": "9101263",
+"background": "event_318",
+"icon": "9101283"
+},
+"subaha": {
+"id": "7300723",
+"background": "common_038",
+"icon": "7300733"
+},
+"belial": {
+"id": "8103463",
+"background": "event_320",
+"icon": "8103463"
+},
+"beelzebub": {
+"id": "9101533",
+"background": "common_068",
+"icon": "9101533"
+},
+"atum": {
+"id": "8103783",
+"background": "common_026",
+"icon": "8103783"
+},
+"tefnut": {
+"id": "8103813",
+"background": "f049_1",
+"icon": "8103813"
+},
+"ra": {
+"id": "8103823",
+"background": "common_034",
+"icon": "8103823"
+},
+"bennu": {
+"id": "8103753",
+"background": "f035_1",
+"icon": "8103753"
+},
+"horus": {
+"id": "8103623",
+"background": "19rb_2",
+"icon": "8103623"
+},
+"osiris": {
+"id": "8103533",
+"background": "event_48",
+"icon": "8103533"
+},
+"wilnas": {
+"id": "7300553",
+"background": "common_063",
+"icon": "7300553"
+},
+"wamdus": {
+"id": "7300573",
+"background": "common_064",
+"icon": "7300573"
+},
+"galleon": {
+"id": "7300593",
+"background": "common_065",
+"icon": "7300593"
+},
+"ewiyar": {
+"id": "7300613",
+"background": "common_062",
+"icon": "7300613"
+},
+"lu woh": {
+"id": "7300633",
+"background": "common_066",
+"icon": "7300633"
+},
+"fediel": {
+"id": "7300653",
+"background": "common_067",
+"icon": "7300653"
+},
+"fire trial": {
+"id": "4200233",
+"background": "event_84",
+"icon": "4200243"
+},
+"water trial": {
+"id": "4200233",
+"background": "event_84",
+"icon": "4200253"
+},
+"earth trial": {
+"id": "4200233",
+"background": "event_84",
+"icon": "4200233"
+},
+"wind trial": {
+"id": "4200233",
+"background": "event_84",
+"icon": "4200263"
+},
+"light trial": {
+"id": "4200233",
+"background": "event_84",
+"icon": "4200273"
+},
+"dark trial": {
+"id": "4200233",
+"background": "event_84",
+"icon": "4200283"
+},
+"siete": {
+"id": "6205773",
+"background": "event_507",
+"icon": "6205773"
+},
+"diaspora": {
+"id": "4300733",
+"background": "event_459",
+"icon": "4300903"
+},
+"mugen": {
+"id": "6205713",
+"background": "f002r_3",
+"icon": "6205713"
+},
+"siegfried": {
+"id": "6205743",
+"background": "f013ra_1",
+"icon": "6205743"
+},
+"agastia": {
+"id": "9101733",
+"background": "event_446",
+"icon": "9102133"
+},
+"fire ex": {
+"id": "5100233",
+"background": "event_292",
+"icon": "5100233"
+},
+"wind ex": {
+"id": "5100243",
+"background": "event_326_a",
+"icon": "5100243"
+},
+"water ex": {
+"id": "5100253",
+"background": "event_292",
+"icon": "5100253"
+},
+"earth ex": {
+"id": "5100263",
+"background": "event_292",
+"icon": "5100263"
+},
+"light ex": {
+"id": "5100283",
+"background": "event_292",
+"icon": "5100283"
+},
+"dark ex": {
+"id": "5100333",
+"background": "event_292",
+"icon": "5100333"
+},
+"exo sagittarius": {
+"id": "8104083",
+"background": "common_072",
+"icon": "8104083"
+},
+"nm90": {
+"id": "8104613",
+"background": "02rb_2",
+"icon": "8104613"
+},
+"nm95": {
+"id": "8104813",
+"background": "event_209",
+"icon": "8104813"
+},
+"nm100": {
+"id": "8104563",
+"background": "event_377",
+"icon": "8104563"
+},
+"nm150": {
+"id": "8104693",
+"background": "f093_1",
+"icon": "8104693"
+},
+"nm200": {
+"id": "8104693",
+"background": "f093_2",
+"icon": "8104693"
+},
+"cosmos": {
+"id": "8103673",
+"background": "common_074",
+"icon": "8104103"
+},
+"exo vohu": {
+"id": "8104113",
+"background": "common_026",
+"icon": "8104113"
+},
+"legion": {
+"id": "9102223",
+"background": "26ra_3",
+"icon": "9102223"
+},
+"grand order hl": {
+"id": "8101223",
+"background": "common_025",
+"icon": "8103063"
+},
+"zwei": {
+"id": "4100703",
+"background": "09rc_3",
+"icon": "4100983"
+},
+"exo cocytus": {
+"id": "8104143",
+"background": "common_017",
+"icon": "8104143"
+},
+"world": {
+"id": "8104023",
+"background": "event_137",
+"icon": "8104023"
+},
+"db nm1": {
+"id": "6101013",
+"background": "e022r_4_a",
+"icon": "6101013"
+},
+"db 3*": {
+"id": "8103493_2",
+"background": "03rb_1",
+"icon": "8103493"
+},
+"db 4*": {
+"id": "9102503",
+"background": "event_418",
+"icon": "9102503"
+},
+"db 5*": {
+"id": "9101623",
+"background": "event_418",
+"icon": "9101623"
+},
+"db nm2": {
+"id": "6101013",
+"background": "event_383",
+"icon": "6101013"
+},
+"db nm3": {
+"id": "6101013",
+"background": "common_041",
+"icon": "6101013"
+},
+"hexa": {
+"id": "7300843",
+"background": "common_079",
+"icon": "7300843"
+},
+"exo ifrit": {
+"id": "8104163",
+"background": "common_014",
+"icon": "8104163"
+},
+"db 2*": {
+"id": "8104163",
+"background": "event_418",
+"icon": "1300253"
+},
+"exo corow": {
+"id": "8104203",
+"background": "common_020",
+"icon": "8104203"
+},
+"zero": {
+"id": "9102383",
+"background": "event_323",
+"icon": "9102393"
+},
+"tiamat": {
+"id": "8104213",
+"background": "common_080",
+"icon": "8104213"
+},
+"chev": {
+"id": "8104233",
+"background": "common_081",
+"icon": "8104233"
+},
+"colossus": {
+"id": "8104243",
+"background": "common_082",
+"icon": "8104243"
+},
+"celeste": {
+"id": "8104253",
+"background": "common_083",
+"icon": "8104253"
+},
+"exo diablo": {
+"id": "8104263",
+"background": "common_041",
+"icon": "8104263"
+},
+"levi": {
+"id": "8104273",
+"background": "common_084",
+"icon": "8104273"
+},
+"ygg": {
+"id": "8104283",
+"background": "common_085",
+"icon": "8104283"
+},
+"maxwell": {
+"id": "5101063",
+"background": "event_453",
+"icon": "5101093"
+},
+"nm250": {
+"id": "8104693",
+"background": "event_11",
+"icon": "8104693"
+},
+"exo sagi": {
+"id": "8104083",
+"background": "common_072",
+"icon": "8104083"
+},
+"paragon": {
+"id": "6205993",
+"background": "event_123",
+"icon": "6205993"
+},
+"witch": {
+"id": "6206033",
+"background": "event_239_a",
+"icon": "6206033"
+},
+"ovk": {
+"id": "6204833",
+"background": "17ra_1_a",
+"icon": "6206183"
+},
+"performer": {
+"id": "6206193",
+"background": "event_539",
+"icon": "6206193"
+},
+"versusia": {
+"id": "7300853",
+"background": "common_087",
+"icon": "7300883"
+},
+"horde": {
+"id": "5100263",
+"background": "event_29",
+"icon": "5100263"
+},
+"nihu": {
+"id": "9102843",
+"background": "common_064",
+"icon": "9102843"
+},
+"belmer": {
+"id": "9102823",
+"background": "common_042",
+"icon": "9102823"
+},
+"naro": {
+"id": "9102863",
+"background": "event_228",
+"icon": "9102863"
+},
+"macu": {
+"id": "9102883",
+"background": "common_021",
+"icon": "9102883"
+}
+}

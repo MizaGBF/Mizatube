@@ -1,0 +1,13 @@
+﻿artifact/
+artifact/*
+emp/
+emp/*
+cache/
+cache/*
+output_page1.png
+output_page2.png
+output_emp.png
+output_artifact.png
+output_thumbnail.png
+quick.bat
+quick.sh

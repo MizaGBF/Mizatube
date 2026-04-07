@@ -1,0 +1,248 @@
+{
+    "Showcase": [
+        {
+            "type":"background"
+        },
+        {
+            "type":"party",
+            "size":1.4,
+            "anchor":"top",
+            "position":[-55, 100]
+        },
+        {
+            "type":"autoinput",
+            "size":3,
+            "anchor":"bottomleft",
+            "position":[200, -25]
+        },
+        {
+            "type":"textinput",
+            "ref":"Thumbnail Text",
+            "anchor":"bottomright",
+            "position":[-15, -20],
+            "fontsize":200,
+            "multilinelimit":true,
+            "maxwidth":840,
+            "bold":true,
+            "outlinecolor":[255,0,0],
+            "gradient":[[255,255,255], [255,255,0]],
+            "rotate":[358, [1280, 700]]
+        }
+    ],
+    "GW / Dread": [
+        {
+            "type":"asset",
+            "asset":"file:assets/dread_barrage.png",
+            "anchor":"topleft",
+            "comment":"It will display if no background is set"
+        },
+        {
+            "type":"background"
+        },
+        {
+            "type":"party",
+            "size":1.4,
+            "anchor":"top",
+            "position":[-55, 100],
+            "noskin":true
+        },
+        {
+            "type":"nminput",
+            "size":1.2,
+            "anchor":"bottomleft",
+            "position":[5, -5]
+        },
+        {
+            "type":"autoinput",
+            "size":3,
+            "anchor":"bottomleft",
+            "position":[200, -25]
+        },
+        {
+            "type":"textinput",
+            "ref":"Thumbnail Text",
+            "anchor":"bottomright",
+            "position":[-15, -20],
+            "fontsize":200,
+            "multilinelimit":true,
+            "maxwidth":840,
+            "bold":true,
+            "fontcolor":[255,196,0],
+            "outlinecolor":[0,0,0],
+            "gradient":[[255,166,0], [255,255,0]],
+            "rotate":[358, [1280, 700]]
+        }
+    ],
+    "Records of the Ten": [
+        {
+            "type":"background"
+        },
+        {
+            "type":"party",
+            "size":1.4,
+            "anchor":"top",
+            "position":[-55, 100],
+            "noskin":true
+        },
+        {
+            "type":"nminput",
+            "size":1.2,
+            "anchor":"bottomleft",
+            "position":[5, -5]
+        },
+        {
+            "type":"autoinput",
+            "size":3,
+            "anchor":"bottomleft",
+            "position":[200, -25]
+        },
+        {
+            "type":"textinput",
+            "ref":"Thumbnail Text",
+            "anchor":"bottomright",
+            "position":[-15, -20],
+            "fontsize":200,
+            "multilinelimit":true,
+            "maxwidth":840,
+            "bold":true,
+            "fontcolor":[255,196,0],
+            "outlinecolor":[0,0,0],
+            "gradient":[[255,166,0], [255,255,0]],
+            "rotate":[358, [1280, 700]]
+        },
+        {
+            "type":"asset",
+            "asset":"file:assets/records_of_the ten.png",
+            "anchor":"topleft",
+            "position":[-40, 0]
+        }
+    ],
+    "Proving Grounds": [
+        {
+            "type":"asset",
+            "asset":"file:assets/proving_grounds.png",
+            "anchor":"topleft"
+        },
+        {
+            "type":"textinput",
+            "ref":"Difficulty Text",
+            "anchor":"topleft",
+            "position":[20, 20],
+            "fontsize":100,
+            "fontcolor":[255,255,255],
+            "gradient":[[255,166,0], [255,255,0]],
+            "outlinecolor":[0,0,0],
+            "outlinesize":8,
+            "bold":true
+        },
+        {
+            "type":"party",
+            "size":1.25,
+            "anchor":"topleft",
+            "position":[38, 433],
+            "mainsummon":true
+        },
+        {
+            "type":"textinput",
+            "ref":"Thumbnail Text",
+            "anchor":"bottomleft",
+            "position":[420, -90],
+            "multilinelimit":true,
+            "fontsize":150,
+            "maxwidth":850,
+            "gradient":[[255,255,255], [255,255,0]],
+            "bold":true,
+            "rotate":[2, [410, 560]]
+        }
+    ],
+    "Tower of Babyl": [
+        {
+            "type":"asset",
+            "asset":"file:assets/tower_of_babyl.png",
+            "anchor":"topleft"
+        },
+        {
+            "type":"boss"
+        },
+        {
+            "type":"party",
+            "size":1.4,
+            "anchor":"top",
+            "position":[50, 60],
+            "noskin":true
+        },
+        {
+            "type":"textinput",
+            "ref":"Floor Text",
+            "anchor":"topleft",
+            "position":[20, 10],
+            "fontsize":100,
+            "fontcolor":[255,255,255],
+            "gradient":[[255,166,0], [255,255,0]],
+            "outlinecolor":[0,0,0],
+            "outlinesize":8,
+            "bold":true
+        },
+        {
+            "type":"textinput",
+            "ref":"Thumbnail Text",
+            "anchor":"bottomleft",
+            "position":[170, -20],
+            "fontsize":200,
+            "multilinelimit":true,
+            "maxwidth":1100,
+            "gradient":[[255,255,255], [255,255,0]],
+            "bold":true
+        }
+    ],
+    "Pride of the Ascendant": [
+        {
+            "type":"background"
+        },
+        {
+            "type":"party",
+            "size":1.4,
+            "anchor":"top",
+            "position":[-55, 100],
+            "noskin":true
+        },
+        {
+            "type":"prideinput",
+            "size":1.2,
+            "anchor":"bottomleft",
+            "position":[5, -5]
+        },
+        {
+            "type":"autoinput",
+            "size":3,
+            "anchor":"bottomleft",
+            "position":[200, -25]
+        },
+        {
+            "type":"textinput",
+            "ref":"Thumbnail Text",
+            "anchor":"bottomright",
+            "position":[-15, -20],
+            "fontsize":200,
+            "multilinelimit":true,
+            "maxwidth":840,
+            "bold":true,
+            "outlinecolor":[255,0,0],
+            "gradient":[[255,255,255], [255,255,0]],
+            "rotate":[358, [1280, 700]]
+        }
+    ],
+    "Background Only": [
+        {
+            "type":"background"
+        }
+    ],
+    "Party Only": [
+        {
+            "type":"party",
+            "size":1.4,
+            "anchor":"top",
+            "position":[-55, 100]
+        }
+    ]
+}
