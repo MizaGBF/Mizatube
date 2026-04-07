@@ -984,7 +984,7 @@ class LayoutEMP():
     portrait_size : V
     portrait_folder : str
     portrait_offset : V
-    emp_start_offset : V
+    emp_start_offset : tuple[V, V]
     emp_size : tuple[V, V]
     emp_per_line : tuple[int, int]
     emp_count_offset : V
@@ -1012,10 +1012,13 @@ class LayoutEMP():
         self.portrait_size = V(196, 408) * (self.size.y  / 408.0)
         self.portrait_folder = "f"
         self.portrait_offset = V(2, 0)
-        self.emp_start_offset = V(self.offset.x + self.portrait_size.x + 2, 0)
         self.emp_size = (
             V(self.portrait_size.y // 3, self.portrait_size.y // 3),
             V(self.portrait_size.y // 4, self.portrait_size.y // 4),
+        )
+        self.emp_start_offset = (
+            V(self.offset.x + self.portrait_size.x + 2, 0),
+            V(self.offset.x + self.portrait_size.x + 2 + (self.emp_size[0].x - self.emp_size[1].x) * 5 / 2, 0),
         )
         self.emp_per_line = (
             5,
@@ -1029,7 +1032,7 @@ class LayoutEMP():
         self.ring_offset = self.portrait_offset
         self.extra_compact_mode = 0
         self.extra_icon_size = V(40, 40)
-        self.extra_start_offset = self.emp_start_offset + V(self.emp_size[0].y * 5 + 20, 5)
+        self.extra_start_offset = self.emp_start_offset[0] + V(self.emp_size[0].y * 5 + 20, 5)
         self.extra_per_line = 1000
         self.extra_text_offset = V(45, 10)
         self.extra_offset = V(0, 40)
@@ -1045,7 +1048,10 @@ class LayoutEMPCompact(LayoutEMP):
         self.offset = V(0, self.size.y)
         self.portrait_size = V(self.size.y, self.size.y)
         self.portrait_folder = "s"
-        self.emp_start_offset = V(self.offset.x + self.portrait_size.x + 2, 0)
+        self.emp_start_offset = (
+            V(self.offset.x + self.portrait_size.x + 2, 0),
+            V(self.offset.x + self.portrait_size.x + 2, 0),
+        )
         self.emp_size = (
             V((IMAGE_SIZE.x - self.portrait_size.x - self.portrait_offset.x) // 15, 0),
             V((IMAGE_SIZE.x - self.portrait_size.x - self.portrait_offset.x) // 20, 0),
@@ -1061,7 +1067,7 @@ class LayoutEMPCompact(LayoutEMP):
         self.ring_offset = self.portrait_offset
         self.extra_compact_mode = 1
         self.extra_icon_size = V(40, 40)
-        self.extra_start_offset = self.emp_start_offset + V(5, 45)
+        self.extra_start_offset = self.emp_start_offset[0] + V(5, 45)
         self.extra_per_line = 3
         self.extra_line_jump = 40
         self.extra_text_offset = V(45, 10)
@@ -1077,7 +1083,10 @@ class LayoutEMPVeryCompact(LayoutEMPCompact):
         self.offset = V(0, self.size.y)
         self.portrait_size = V(self.size.y, self.size.y)
         self.portrait_folder = "s"
-        self.emp_start_offset = V(self.offset.x + self.portrait_size.x + 2, 0)
+        self.emp_start_offset = (
+            V(self.offset.x + self.portrait_size.x + 2, 0),
+            V(self.offset.x + self.portrait_size.x + 2, 0),
+        )
         self.emp_size = (
             V((IMAGE_SIZE.x - self.portrait_size.x - self.portrait_offset.x) // 15, 0),
             V((IMAGE_SIZE.x - self.portrait_size.x - self.portrait_offset.x) // 20, 0),
@@ -1095,7 +1104,7 @@ class LayoutEMPVeryCompact(LayoutEMPCompact):
         self.ring_offset = self.portrait_offset
         self.extra_compact_mode = 2
         self.extra_icon_size = V(40, 40)
-        self.extra_start_offset = self.emp_start_offset + V(5, 52)
+        self.extra_start_offset = self.emp_start_offset[0] + V(5, 52)
         self.extra_per_line = 1000
         self.extra_text_offset = V(45, 10)
         self.extra_offset = V(130, 0)
@@ -2927,12 +2936,12 @@ class Mizatube:
                 position + layout.ring_offset
             )
         # EMP
-        emp_position : V = position + layout.emp_start_offset
         emp_display : int = 1 if len(emp_data['emp']) > 15 else 0
+        emp_position : V = position + layout.emp_start_offset[emp_display]
         for i, emp in enumerate(emp_data['emp']):
             if i > 0:
                 if i % layout.emp_per_line[emp_display] == 0:
-                    emp_position.x = position.x + layout.emp_start_offset.x
+                    emp_position.x = position.x + layout.emp_start_offset[emp_display].x
                     emp_position.y += layout.emp_size[emp_display].y
                 else:
                     emp_position.x += layout.emp_size[emp_display].x
