@@ -2829,7 +2829,7 @@ class Mizatube:
         # Select layout
         layout : LayoutModifier = LayoutModifier()
         # Draw background
-        bg_h : int = (len(party["deck"]["pc"]["damage_info"]["effect_value_info"]) // 6 + 1) * layout.mod_vertical_offset + layout.bg_margin * 5
+        bg_h : int = ((len(party["deck"]["pc"]["damage_info"]["effect_value_info"]) - 1) // 6 + 1) * layout.mod_vertical_offset + layout.bg_margin * 5
         img.paste_transparency(
             (await self.fetch("file:assets/bg_1.png")).ninepatch(V(IMAGE_SIZE.x, bg_h), layout.bg_margin),
             layout.origin
