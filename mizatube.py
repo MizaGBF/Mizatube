@@ -2111,6 +2111,7 @@ class Mizatube:
                     action["boss"] = data
                     if "input" not in self.args:
                         self.register_boss(data)
+                    break
                 else:
                     if s not in self.bosses:
                         print(s, "not found in the boss data")
