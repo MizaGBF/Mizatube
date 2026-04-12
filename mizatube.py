@@ -88,6 +88,12 @@ class V():
     def __len__(self : V) -> int:
         return 2
 
+    def __str__(self : V) -> str:
+        return f"{self.x},{self.y}"
+
+    def __repr__(self : V) -> str:
+        return f"V(x={self.x}, y={self.y})"
+
     # to convert to an integer tuple (needed for pillow)
     @property
     def i(self : V) -> tuple[int, int]:
@@ -703,6 +709,7 @@ class CreateJSTimelineParser:
 # Layout of the party images
 @dataclass(slots=True)
 class LayoutPartyBase():
+    party_size : int
     origin : V
     bg_size : V
     bg_margin : V
@@ -725,10 +732,14 @@ class LayoutPartyBase():
     skill_size : V
     skill_text_offset : V
     skill_text_line_height : int
-    equipment_size : V
     equipment_offset : V
+    equipment_size : V
+    bullet_offset : V
+    bullet_size : V
+    bullet_per_line : int
 
     def __init__(self : LayoutPartyBase) -> None:
+        self.party_size = 6
         self.origin = V.ZERO()
         self.bg_size = V(IMAGE_SIZE.x, 300)
         self.bg_margin = 5
@@ -738,11 +749,11 @@ class LayoutPartyBase():
         self.show_name = False
         self.name_character_limit = 9
 
-    def groups(self : LayoutPartyBase, len_party : int):
+    def groups(self : LayoutPartyBase):
         index : int = 0
         position : V = self.party_groups[index][0]
         left : int = self.party_groups[index][1]
-        for i in range(len_party):
+        for i in range(self.party_size):
             if left == self.party_groups[index][1]:
                 yield (
                     i,
@@ -783,15 +794,19 @@ class LayoutPartyNormal(LayoutPartyBase):
         self.name_offset = V(5, 10)
         self.show_name = True
         self.skill_offset = self.party_groups[0][0] + V(0, self.portrait_size.y + self.name_box_size.y + 10)
-        self.skill_size = V(539, 80)
+        self.skill_size = V(350, 80)
         self.skill_text_offset = V(5, 4)
         self.skill_text_line_height = 27
         self.equipment_size = V(80, 80)
         self.equipment_offset = self.skill_offset + V(self.skill_size.x + 20, 0)
+        self.bullet_offset = self.equipment_offset
+        self.bullet_size = V(80, 80)
+        self.bullet_per_line = 1000
     
 class LayoutPartyUnlimited(LayoutPartyNormal):
     def __init__(self : LayoutPartyUnlimited) -> None:
         super().__init__()
+        self.party_size = 9
         self.party_groups = [
             (self.origin + V(18, 25), 4, "text_main"),
             (self.origin + V(18, 25 + 140), 5, "text_sub"),
@@ -807,10 +822,14 @@ class LayoutPartyUnlimited(LayoutPartyNormal):
         self.skill_size = V(380, 80)
         self.equipment_offset = self.party_groups[1][0] + V(self.portrait_size.x * 5 + 20 , 0)
         self.equipment_size = V(120, 120)
+        self.bullet_offset = self.equipment_offset - V(0, 40)
+        self.bullet_size = V(80, 80)
+        self.bullet_per_line = 3
     
 class LayoutPartyBabyl(LayoutPartyUnlimited):
     def __init__(self : LayoutPartyBabyl) -> None:
         super().__init__()
+        self.party_size = 12
         self.party_groups = [
             (self.origin + V(18, 25), 4, ""),
             (self.origin + V(18 * 2 + 100 * 4, 25), 4, ""),
@@ -827,6 +846,9 @@ class LayoutPartyBabyl(LayoutPartyUnlimited):
         self.skill_size = V(330, 80)
         self.equipment_offset = self.skill_offset + V(self.skill_size.x + 10 , 0)
         self.equipment_size = V(100, 100)
+        self.bullet_offset = self.skill_offset + V(0, self.skill_size.y + 5)
+        self.bullet_size = V(55, 55)
+        self.bullet_per_line = 1000
 
 @dataclass(slots=True)
 class LayoutSummon():
@@ -1196,13 +1218,13 @@ class LayoutArtifactVeryCompact(LayoutArtifactCompact):
 
 # Main class
 class Mizatube:
-    VERSION : str = "1.0"
+    VERSION : str = "1.1"
     BOOKMARK_VERSION : int = 3
-    ANY_CHARACTER = [
+    ANY_CHARACTER = {
         "3020072000", # Young cat
         "3030182000", # SR Lyria
         "3040643000", # SSR Lyria
-    ]
+    }
     # colors
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
@@ -2315,7 +2337,7 @@ class Mizatube:
                 position - layout.box_margin
             )
         # Draw portraits
-        for (i, position, text) in layout.groups(len(party["deck"]["npc"]) + 1):
+        for (i, position, text) in layout.groups():
             if i == 0:
                 name = party["deck"]["pc"]["job"]["master"]["name"]
                 # Draw MC
@@ -2435,6 +2457,34 @@ class Mizatube:
                 (await self.fetch(equipment)).resize(layout.equipment_size),
                 layout.equipment_offset
             )
+        elif len(party["bullet_info"]) != 0:
+            position : V = layout.bullet_offset.copy()
+            for i in range(6):
+                key = f"bullet_{i + 1}"
+                if party["bullet_info"]["set_bullets"][key]["bullet_id"] is not None:
+                    img.paste(
+                        (
+                            await self.fetch(
+                                f"assets_en/img/sp/assets/bullet/s/{party["bullet_info"]["set_bullets"][key]["bullet_id"]}.jpg"
+                            )
+                        ).resize(layout.bullet_size),
+                        position
+                    )
+                else:
+                    img.paste(
+                        (
+                            await self.fetch(
+                                "assets_en/img/sp/job/bullet/empty.png"
+                            )
+                        ).resize(layout.bullet_size),
+                        position
+                    )
+                if i > 0 and layout.bullet_per_line > 0 and i % layout.bullet_per_line == layout.bullet_per_line - 1:
+                    position.x = layout.bullet_offset.x
+                    position.y += layout.bullet_size.y
+                else:
+                    position.x += layout.bullet_size.x
+
 
     async def draw_individual_summon(
         self : Mizatube,
@@ -2482,7 +2532,7 @@ class Mizatube:
             position : V
             folder : str
             if i == 1:
-                position = layout.main_position
+                position = layout.main_position.copy()
                 size = layout.main_size
                 folder = "s"
             else:
@@ -2594,7 +2644,7 @@ class Mizatube:
             position : V
             folder : str
             if i == 1:
-                position = layout.main_position
+                position = layout.main_position.copy()
                 size = layout.main_size
                 folder = "ls"
             else:
@@ -2804,7 +2854,7 @@ class Mizatube:
             stroke_fill=self.BLACK
         )
         # Boosts
-        position : V = layout.boost_origin
+        position : V = layout.boost_origin.copy()
         BOOSTS : dict[str, str] = {
             "weapon_skill_enhance":"icon_skillenhance_1",
             "weapon_skill_enhance_magna":"icon_skillenhance_2",
@@ -2834,7 +2884,7 @@ class Mizatube:
             (await self.fetch("file:assets/bg_1.png")).ninepatch(V(IMAGE_SIZE.x, bg_h), layout.bg_margin),
             layout.origin
         )
-        position : V = layout.mod_offset_start
+        position : V = layout.mod_offset_start.copy()
         for i, mod in enumerate(party["deck"]["pc"]["damage_info"]["effect_value_info"]):
             if i > 0:
                 if i % layout.mod_per_line == 0:
@@ -3190,7 +3240,7 @@ class Mizatube:
                 layout = LayoutEMPCompact()
             else:
                 layout = LayoutEMPVeryCompact()
-            position : V = layout.origin
+            position : V = layout.origin.copy()
             for k, emp_data in emps.items():
                 await self.draw_individual_emp(img, layout, position, party["deck"]["npc"][k], emp_data, party)
                 position += layout.offset
@@ -3219,7 +3269,7 @@ class Mizatube:
                 layout = LayoutArtifactCompact()
             else:
                 layout = LayoutArtifactVeryCompact()
-            position : V = layout.origin
+            position : V = layout.origin.copy()
             for k, artifact_data in artifacts.items():
                 await self.draw_individual_artifact(img, layout, position, party["deck"]["npc"][k], artifact_data, party)
                 position += layout.offset
