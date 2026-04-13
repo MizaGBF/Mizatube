@@ -2461,7 +2461,9 @@ class Mizatube:
             position : V = layout.bullet_offset.copy()
             for i in range(6):
                 key = f"bullet_{i + 1}"
-                if party["bullet_info"]["set_bullets"][key]["bullet_id"] is not None:
+                if not party["bullet_info"]["set_bullets"][key]["can_set_flag"]:
+                    break
+                elif party["bullet_info"]["set_bullets"][key]["bullet_id"] is not None:
                     img.paste(
                         (
                             await self.fetch(
