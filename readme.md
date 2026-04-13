@@ -94,4 +94,4 @@ For `textinput`:
 
 # Note  
   
-The project name is a reference to how people call my Yotuueb Channel.  
+The project name is a reference to how people call my Youtube Channel.  
