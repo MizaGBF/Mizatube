@@ -7,7 +7,8 @@
             "type":"party",
             "size":1.4,
             "anchor":"top",
-            "position":[-55, 100]
+            "position":[-55, 100],
+            "noskin":true
         },
         {
             "type":"autoinput",
@@ -242,7 +243,8 @@
             "type":"party",
             "size":1.4,
             "anchor":"top",
-            "position":[-55, 100]
+            "position":[-55, 100],
+            "noskin":true
         }
     ]
 }
