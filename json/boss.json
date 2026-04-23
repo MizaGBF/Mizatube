@@ -383,5 +383,15 @@
 "id": "9102883",
 "background": "common_021",
 "icon": "9102883"
+},
+"papa": {
+"id": "9102903",
+"background": "common_019",
+"icon": "9102903"
+},
+"zamalvoch": {
+"id": "9102923",
+"background": "common_069",
+"icon": "9102923"
 }
 }

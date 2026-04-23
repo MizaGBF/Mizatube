@@ -1218,7 +1218,7 @@ class LayoutArtifactVeryCompact(LayoutArtifactCompact):
 
 # Main class
 class Mizatube:
-    VERSION : str = "1.1"
+    VERSION : str = "1.2"
     BOOKMARK_VERSION : int = 3
     ANY_CHARACTER = {
         "3020072000", # Young cat
@@ -1534,7 +1534,10 @@ class Mizatube:
             grad : IMG = IMG.new_canvas(GBF_SIZE)
             render = IMG(Image.composite(render.image, grad.image, self.mask))
             # paste render
-            img.paste_transparency(render.resize(GBF_SIZE * (680 / (1.0 * GBF_SIZE.y))), V.ZERO())
+            img.paste_transparency(
+                render.resize(GBF_SIZE * (720 / (1.0 * GBF_SIZE.y))),
+                V(-5, 0)
+            )
             
             # if a background if selected, add it behind
             if bg_img is not None:
