@@ -51,6 +51,7 @@ Some command line arguments:
 - `-i/--input I1 I2 I3 ... IN`: To pass a series of input that the script will read and use during thumbnail generation. For automation purpose.  
 - `-nt/--nothumbnail`: You won't be asked if you want to generate a thumbnail.  
 - `-sp/--skipparty`: You'll go straight to generate a thumbnail, without generating party images.  
+- `-nc/--noclip`: Disable the clipboard read. Useful in conjunction with `-sp/--skipparty` and templates not requiring any Party data.  
 - `-dr/--dryrun`: Images won't be written to disk (for debugging).  
 - `-lb/--listbosses`: List the registered bosses.  
 - `-tb/--testboss NAME`: Test to generate a boss.  
@@ -61,15 +62,17 @@ Some command line arguments:
   
 Templates can be set in `json/template.json`.  
 Possible types are:  
-* `background`: Force the Background selection prompt to generate a background image.  
-* `boss`: Similar to `background` but only generate the boss (No background image).  
+* `background`: The Background selection prompt to generate a boss background image.  
+* `boss`: Similar to `background` but only generate the boss without background image.  
+* `bossbg`: Similar to `background` but doesn't generate the boss.  
 * `party`: Check the clipboard for GBFPIB data to draw the party.  
-* `autoinput`: Force the Auto Setting selection prompt.  
-* `nminput`: Force the Unite and Fight / Dread Barrage / Records of the tens Fight / Nightmare icon selection prompt.  
-* `textinput`: Force the Text input prompt.  
+* `autoinput`: The Auto Setting selection prompt.  
+* `nminput`: The Unite and Fight / Dread Barrage / Records of the tens Fight / Nightmare icon selection prompt.  
+* `textinput`: The Text input prompt.  
+* `fateepisode`: The Character Profile Room thumbnail prompt.  
 * `asset`: To display an asset. Filename must be set under the `asset` key. Local file names must follow `file:`, otherwise they will be requested from GBF CDN.  
   
-Additionaly, all elements (except `background` and `boss`) can have the following values set:
+Additionaly, all elements (except `background`, `fateepisode` and `boss`) can have the following values set:
 * `position`: An array of two integer, X and Y offset relative to the anchor.  
 * `anchor`: Default position of the element. Default is `topleft`.  
 * `size`: Float, size multiplier.  

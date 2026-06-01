@@ -9,5 +9,5 @@ output_page2.png
 output_emp.png
 output_artifact.png
 output_thumbnail.png
-quick.bat
-quick.sh
+quick*.bat
+quick*.sh

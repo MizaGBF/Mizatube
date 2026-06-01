@@ -1218,7 +1218,7 @@ class LayoutArtifactVeryCompact(LayoutArtifactCompact):
 
 # Main class
 class Mizatube:
-    VERSION : str = "1.2"
+    VERSION : str = "1.3"
     BOOKMARK_VERSION : int = 3
     ANY_CHARACTER = {
         "3020072000", # Young cat
@@ -1492,7 +1492,19 @@ class Mizatube:
                 return False
         return True
 
-    async def make_boss_background(self : Mizatube, boss_data : dict) -> IMG|None:
+    async def make_boss_background(self : Mizatube, boss_data : dict) -> IMG:
+        bg_img : IMG = IMG(
+            await self.get(f"assets_en/img/sp/raid/bg/{boss_data["background"]}.jpg")
+        )
+        # resize it to fit the thumbnail
+        mod : float = 1280 / bg_img.image.size[0]
+        bg_img = bg_img.resize(V(bg_img.image.size[0] * mod, bg_img.image.size[0] * mod))
+        # calculate and apply a crop to show somehow the middle part
+        y : int = (bg_img.image.size[1] // 2) - 360
+        bg_img = bg_img.crop((0, y, 1280, y + 720))
+        return bg_img
+
+    async def make_boss(self : Mizatube, boss_data : dict) -> IMG|None:
         try:
             eid : str = boss_data["id"]
             suffix : str
@@ -1504,18 +1516,6 @@ class Mizatube:
                 eid = eid.split("_")[0]
             else:
                 suffix = ""
-            # retrieve background
-            bg_img : IMG|None = None
-            if background is not None:
-                bg_img = IMG(
-                    await self.get(f"assets_en/img/sp/raid/bg/{background}.jpg")
-                )
-                # resize it to fit the thumbnail
-                mod : float = 1280 / bg_img.image.size[0]
-                bg_img = bg_img.resize(V(bg_img.image.size[0] * mod, bg_img.image.size[0] * mod))
-                # calculate and apply a crop to show somehow the middle part
-                y : int = (bg_img.image.size[1] // 2) - 360
-                bg_img = bg_img.crop((0, y, 1280, y + 720))
 
             # make image (youtube wants 720p thumbnail usually)
             img : IMG = IMG.new_canvas(THUMBNAIL_SIZE)
@@ -1539,8 +1539,9 @@ class Mizatube:
                 V(-5, 0)
             )
             
-            # if a background if selected, add it behind
-            if bg_img is not None:
+            # add background
+            if background is not None:
+                bg_img : IMG = await self.make_boss_background(boss_data)
                 bg_img.paste_transparency(img, V.ZERO())
                 img.swap(bg_img)
             try: # add the icon (if set)
@@ -1558,6 +1559,14 @@ class Mizatube:
             return None
 
     async def draw_thumbnail_background(self : Mizatube, img : IMG, action : dict) -> None:
+        if "boss" not in action:
+            return
+        bg : IMG = await self.make_boss(action["boss"])
+        if bg is None:
+            return
+        img.swap(img.alpha(bg))
+
+    async def draw_thumbnail_boss_background(self : Mizatube, img : IMG, action : dict) -> None:
         if "boss" not in action:
             return
         bg : IMG = await self.make_boss_background(action["boss"])
@@ -2053,6 +2062,8 @@ class Mizatube:
                     if "boss" in action:
                         action["boss"]["background"] = None
                     await self.draw_thumbnail_background(img, action)
+                case "bossbg":
+                    await self.draw_thumbnail_boss_background(img, action)
                 case "party":
                     await self.draw_thumbnail_party(img, action, party)
                 case "asset":
@@ -2126,7 +2137,7 @@ class Mizatube:
     def thumbnail_select_boss(self : Mizatube, action : dict) -> None:
         self.load_bosses()
         while True:
-            print(f"Input the {action["type"]} you want to use (Leave blank to ignore)")
+            print(f"Input the Boss Data you want to use (Leave blank to ignore)")
             s = self.input().lower()
             if s == "":
                 break
@@ -2249,6 +2260,36 @@ class Mizatube:
         action["asset"] = f"assets_en/img/sp/quest/assets/free/conquest_{pn:03}_proud{p}.png"
         action["type"] = "asset"
 
+    async def thumbnail_select_fate_episode(self : Mizatube, action : dict) -> None:
+        c : str = self.input("Input a character ID:")
+        print("Please select the uncap (make sure the art exists)")
+        print("[1] Base")
+        print("[2] MLB")
+        print("[3] FLB")
+        print("[4] Transcendence")
+        print("[5] Transcendence Maxed")
+        while True:
+            u : str = self.input()
+            if u in {"1","2","3","4","5"}:
+                break
+        url : str = f"assets_en/img/sp/assets/npc/profile/{c}_0{u}.png"
+        print(f"Checking if {c}_0{u}.png exists...")
+        img = await self.fetch(url)
+        if img is None:
+            print("This character at this uncap level won't work")
+            return
+        print("Success.")
+        w, h = img.image.size
+        action["size"] = min(THUMBNAIL_SIZE.x / w, THUMBNAIL_SIZE.x / h)
+        w = round(w * action["size"])
+        h = round(h * action["size"])
+        x = (THUMBNAIL_SIZE.x - w) // 2
+        y = (THUMBNAIL_SIZE.y - h) // 2
+        action["position"] = [x, y]
+        action["anchor"] = "topleft"
+        action["asset"] = url
+        action["type"] = "asset"
+
     async def process_thumbnail(self : Mizatube, data : dict) -> None:
         if self.template is None:
             try:
@@ -2265,7 +2306,7 @@ class Mizatube:
         # iterate over actions to set their user settings
         for i, action in enumerate(template):
             match action["type"]:
-                case "background"|"boss":
+                case "background"|"boss"|"bossbg":
                     self.thumbnail_select_boss(action)
                 case "autoinput":
                     self.thumbnail_select_auto_mode(action)
@@ -2276,6 +2317,8 @@ class Mizatube:
                 case "textinput": # text input
                     print(f"Input the '{action["ref"]}'")
                     action["string"] = self.input()
+                case "fateepisode": # character portrait selection
+                    await self.thumbnail_select_fate_episode(action)
         await self.draw_thumbnail(data["party"], template)
 
     def process_emp(self : Mizatube, data : dict) -> None:
@@ -3287,6 +3330,8 @@ class Mizatube:
         folder : Path = Path("cache")
         if not folder.exists():
             folder.mkdir()
+        if len(data) == 0:
+            return True
         print("Generating images...")
         # load language fonts
         if self.language != data["lang"] or self.font is None:
@@ -3321,8 +3366,10 @@ class Mizatube:
             if self.args.get("json", None) is not None:
                 with open(self.args["json"], mode="r", encoding="utf-8") as f:
                     data = json.load(f)
-            else:
+            elif self.args.get("noclip", None) is None:
                 data = read_clipboard()
+            else:
+                data = {"ver":self.BOOKMARK_VERSION, "lang":"en", "party":{}}
         except Exception as e:
             print(pexc(e))
             print("An error occured")
@@ -3355,7 +3402,7 @@ class Mizatube:
             elif "id" in data:
                 async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=20)) as self.client:
                     data.pop("ver", None)
-                    img : IMG|None = await self.make_boss_background(data)
+                    img : IMG|None = await self.make_boss(data)
                     if img is None:
                         print("Error: Couldn't generate a thumbnail from this boss data.")
                     else:
@@ -3385,7 +3432,7 @@ class Mizatube:
                 print("*", "\n* ".join(r))
         else:
             async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=20)) as self.client:
-                img : IMG|None = await self.make_boss_background(self.bosses[name])
+                img : IMG|None = await self.make_boss(self.bosses[name])
                 if img is None:
                     print("Error: Couldn't generate a thumbnail from this boss data.")
                 else:
@@ -3411,6 +3458,7 @@ class Mizatube:
         primary.add_argument('-i', '--input', help="set text inputs", nargs='+', default=None)
         primary.add_argument('-nt', '--nothumbnail', help="disable thumbnail prompt", action='store_const', const=True, default=False, metavar='')
         primary.add_argument('-sp', '--skipparty', help="skip party image generation to make only a thumbnail", action='store_const', const=True, default=False, metavar='')
+        primary.add_argument('-nc', '--noclip', help="clipboard won't be read (For debugging or use with --nothumbnail)", action='store_const', const=True, default=False, metavar='')
         
         utility = parser.add_argument_group('utility', 'utility commands.')
         utility.add_argument('-dr', '--dryrun', help="images won't be written (for debugging)", action='store_const', const=True, default=False, metavar='')
@@ -3422,7 +3470,8 @@ class Mizatube:
         self.args = {
             "dry":args.dryrun,
             "nothumbnail":args.nothumbnail,
-            "skipparty":args.skipparty
+            "skipparty":args.skipparty,
+            "noclip":args.noclip,
         }
         if args.json is not None:
             self.args["json"] = args.json[0]

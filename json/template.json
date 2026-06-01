@@ -233,9 +233,40 @@
             "rotate":[358, [1280, 700]]
         }
     ],
-    "Background Only": [
+    "Fate Episode": [
+        {
+            "type":"bossbg"
+        },
+        {
+            "type":"fateepisode"
+        },
+        {
+            "type":"textinput",
+            "ref":"Thumbnail Text",
+            "anchor":"bottomright",
+            "position":[-15, -20],
+            "fontsize":200,
+            "multilinelimit":true,
+            "maxwidth":840,
+            "bold":true,
+            "outlinecolor":[255,0,0],
+            "gradient":[[255,255,255], [255,255,0]],
+            "rotate":[358, [1280, 700]]
+        }
+    ],
+    "Boss Only": [
         {
             "type":"background"
+        }
+    ],
+    "Boss Only (No background)": [
+        {
+            "type":"boss"
+        }
+    ],
+    "Background Only": [
+        {
+            "type":"bossbg"
         }
     ],
     "Party Only": [
