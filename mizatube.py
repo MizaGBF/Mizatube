@@ -3366,7 +3366,7 @@ class Mizatube:
             if self.args.get("json", None) is not None:
                 with open(self.args["json"], mode="r", encoding="utf-8") as f:
                     data = json.load(f)
-            elif self.args.get("noclip", None) is None:
+            elif self.args.get("noclip", None) is not None:
                 data = read_clipboard()
             else:
                 data = {"ver":self.BOOKMARK_VERSION, "lang":"en", "party":{}}
