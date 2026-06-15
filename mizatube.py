@@ -910,7 +910,7 @@ class LayoutWeapon():
         self.bg_size = V(IMAGE_SIZE.x - 150, 570)
         self.origin = V((IMAGE_SIZE.x - self.bg_size.x) // 2, 500)
         self.main_position = self.origin + V(15, 20) + V(0, 70)
-        self.main_size = V(150, 320)
+        self.main_size = V(160, 340)
         self.sub_position = self.main_position - V(0, 70) + V(self.main_size.x + 15, 0)
         self.sub_size = V(166, 95)
         self.skill_size = V(40, 40)
@@ -1218,7 +1218,7 @@ class LayoutArtifactVeryCompact(LayoutArtifactCompact):
 
 # Main class
 class Mizatube:
-    VERSION : str = "1.3"
+    VERSION : str = "1.4"
     BOOKMARK_VERSION : int = 3
     ANY_CHARACTER = {
         "3020072000", # Young cat
@@ -2762,7 +2762,8 @@ class Mizatube:
                 skill_lines = 1
             # Skills
             has_skill : bool = False
-            for i in range(3):
+            skill_count : int = 4
+            for i in range(skill_count):
                 if weapon_data[f"skill{i + 1}"] is not None:
                     has_skill = True
                     skill_lines += 1
@@ -2781,7 +2782,7 @@ class Mizatube:
                             font=self.font[2]
                         )
                     self.overwrite_weapon_skill(weapon_data)
-                    for i in range(3):
+                    for i in range(skill_count):
                         key : str = f"skill{i + 1}"
                         if weapon_data[key] is not None:
                             if "overwrite_image" in weapon_data[key]:
