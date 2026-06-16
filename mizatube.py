@@ -1196,7 +1196,7 @@ class LayoutArtifactCompact(LayoutArtifact):
         self.skill_per_line = 2
         self.skill_line_jump = 40
         self.skill_desc_chara_limit = 45
-        self.skill_desc_chara_limit_compact = 15
+        self.skill_desc_chara_limit_compact = 12
         self.skill_offset = V(380, 0)
 
 class LayoutArtifactVeryCompact(LayoutArtifactCompact):
