@@ -134,34 +134,64 @@
 "background": "event_446",
 "icon": "9102133"
 },
-"fire ex": {
+"fire ex summer": {
 "id": "5100233",
 "background": "event_292",
 "icon": "5100233"
 },
-"wind ex": {
+"wind ex summer": {
 "id": "5100243",
-"background": "event_326_a",
+"background": "event_292",
 "icon": "5100243"
 },
-"water ex": {
+"water ex summer": {
 "id": "5100253",
 "background": "event_292",
 "icon": "5100253"
 },
-"earth ex": {
+"earth ex summer": {
 "id": "5100263",
 "background": "event_292",
 "icon": "5100263"
 },
-"light ex": {
+"light ex summer": {
 "id": "5100283",
 "background": "event_292",
 "icon": "5100283"
 },
-"dark ex": {
+"dark ex summer": {
 "id": "5100333",
 "background": "event_292",
+"icon": "5100333"
+},
+"fire ex winter": {
+"id": "5100233",
+"background": "event_326_a",
+"icon": "5100233"
+},
+"wind ex winter": {
+"id": "5100243",
+"background": "event_326_a",
+"icon": "5100243"
+},
+"water ex winter": {
+"id": "5100253",
+"background": "event_326_a",
+"icon": "5100253"
+},
+"earth ex winter": {
+"id": "5100263",
+"background": "event_326_a",
+"icon": "5100263"
+},
+"light ex winter": {
+"id": "5100283",
+"background": "event_326_a",
+"icon": "5100283"
+},
+"dark ex winter": {
+"id": "5100333",
+"background": "event_326_a",
 "icon": "5100333"
 },
 "exo sagittarius": {
@@ -175,9 +205,9 @@
 "icon": "8104613"
 },
 "nm95": {
-"id": "8104813",
-"background": "event_209",
-"icon": "8104813"
+"id": "8105043",
+"background": "f008r_3",
+"icon": "8105043"
 },
 "nm100": {
 "id": "8104563",
