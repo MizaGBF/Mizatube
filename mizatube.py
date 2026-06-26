@@ -2925,6 +2925,8 @@ class Mizatube:
             position += V(layout.boost_horizontal_offset, 0)
 
     async def draw_modifiers(self : Mizatube, img : IMG, party : dict) -> None:
+        if len(party["deck"]["pc"]["damage_info"]["effect_value_info"]) == 0:
+            return
         # Select layout
         layout : LayoutModifier = LayoutModifier()
         # Draw background
