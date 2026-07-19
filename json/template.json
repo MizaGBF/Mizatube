@@ -5,35 +5,35 @@
         },
         {
             "type":"party",
-            "size":1.4,
+            "size":4.2,
             "anchor":"top",
-            "position":[-55, 100],
+            "position":[-165, 300],
             "noskin":true
         },
         {
             "type":"autoinput",
-            "size":3,
+            "size":9,
             "anchor":"bottomleft",
-            "position":[200, -25]
+            "position":[600, -75]
         },
         {
             "type":"textinput",
             "ref":"Thumbnail Text",
             "anchor":"bottomright",
-            "position":[-15, -20],
-            "fontsize":200,
+            "position":[-45, -60],
+            "fontsize":600,
             "multilinelimit":true,
-            "maxwidth":840,
+            "maxwidth":2520,
             "bold":true,
             "outlinecolor":[255,0,0],
             "gradient":[[255,255,255], [255,255,0]],
-            "rotate":[358, [1280, 700]]
+            "rotate":[358, [3840, 2100]]
         }
     ],
     "GW / Dread": [
         {
             "type":"asset",
-            "asset":"file:assets/dread_barrage.png",
+            "asset":"file:assets/dread_barrage_upscaled_4k.png",
             "anchor":"topleft",
             "comment":"It will display if no background is set"
         },
@@ -42,36 +42,36 @@
         },
         {
             "type":"party",
-            "size":1.4,
+            "size":4.2,
             "anchor":"top",
-            "position":[-55, 100],
+            "position":[-165, 300],
             "noskin":true
         },
         {
             "type":"nminput",
-            "size":1.2,
+            "size":3.6,
             "anchor":"bottomleft",
-            "position":[5, -5]
+            "position":[15, -15]
         },
         {
             "type":"autoinput",
-            "size":3,
+            "size":9,
             "anchor":"bottomleft",
-            "position":[200, -25]
+            "position":[600, -75]
         },
         {
             "type":"textinput",
             "ref":"Thumbnail Text",
             "anchor":"bottomright",
-            "position":[-15, -20],
-            "fontsize":200,
+            "position":[-45, -60],
+            "fontsize":600,
             "multilinelimit":true,
-            "maxwidth":840,
+            "maxwidth":2520,
             "bold":true,
             "fontcolor":[255,196,0],
             "outlinecolor":[0,0,0],
             "gradient":[[255,166,0], [255,255,0]],
-            "rotate":[358, [1280, 700]]
+            "rotate":[358, [3840, 2100]]
         }
     ],
     "Records of the Ten": [
@@ -80,86 +80,87 @@
         },
         {
             "type":"party",
-            "size":1.4,
+            "size":4.2,
             "anchor":"top",
-            "position":[-55, 100],
+            "position":[-165, 300],
             "noskin":true
         },
         {
             "type":"nminput",
-            "size":1.2,
+            "size":3.6,
             "anchor":"bottomleft",
-            "position":[5, -5]
+            "position":[15, -15]
         },
         {
             "type":"autoinput",
-            "size":3,
+            "size":9,
             "anchor":"bottomleft",
-            "position":[200, -25]
+            "position":[600, -75]
         },
         {
             "type":"textinput",
             "ref":"Thumbnail Text",
             "anchor":"bottomright",
-            "position":[-15, -20],
-            "fontsize":200,
+            "position":[-45, -60],
+            "fontsize":600,
             "multilinelimit":true,
-            "maxwidth":840,
+            "maxwidth":2520,
             "bold":true,
             "fontcolor":[255,196,0],
             "outlinecolor":[0,0,0],
             "gradient":[[255,166,0], [255,255,0]],
-            "rotate":[358, [1280, 700]]
+            "rotate":[358, [3840, 2100]]
         },
         {
             "type":"asset",
             "asset":"file:assets/records_of_the ten.png",
             "anchor":"topleft",
-            "position":[-40, 0]
+            "size":3,
+            "position":[-120, 0]
         }
     ],
     "Proving Grounds": [
         {
             "type":"asset",
-            "asset":"file:assets/proving_grounds.png",
+            "asset":"file:assets/proving_grounds_upscaled_4k.png",
             "anchor":"topleft"
         },
         {
             "type":"textinput",
             "ref":"Difficulty Text",
             "anchor":"topleft",
-            "position":[20, 20],
-            "fontsize":100,
+            "position":[60, 60],
+            "fontsize":300,
             "fontcolor":[255,255,255],
             "gradient":[[255,166,0], [255,255,0]],
             "outlinecolor":[0,0,0],
-            "outlinesize":8,
+            "outlinesize":24,
             "bold":true
         },
         {
             "type":"party",
-            "size":1.25,
+            "size":3.75,
             "anchor":"topleft",
-            "position":[38, 433],
+            "position":[114, 1299],
             "mainsummon":true
         },
         {
             "type":"textinput",
             "ref":"Thumbnail Text",
             "anchor":"bottomleft",
-            "position":[420, -90],
+            "position":[1260, -270],
             "multilinelimit":true,
-            "fontsize":150,
-            "maxwidth":850,
+            "fontsize":450,
+            "maxwidth":2550,
             "gradient":[[255,255,255], [255,255,0]],
             "bold":true,
-            "rotate":[2, [410, 560]]
+            "rotate":[2, [1230, 1680]]
         }
     ],
     "Tower of Babyl": [
         {
             "type":"asset",
-            "asset":"file:assets/tower_of_babyl.png",
+            "asset":"file:assets/tower_of_babyl_upscaled_4k.png",
             "anchor":"topleft"
         },
         {
@@ -167,31 +168,31 @@
         },
         {
             "type":"party",
-            "size":1.4,
+            "size":4.2,
             "anchor":"top",
-            "position":[50, 60],
+            "position":[150, 180],
             "noskin":true
         },
         {
             "type":"textinput",
             "ref":"Floor Text",
             "anchor":"topleft",
-            "position":[20, 10],
-            "fontsize":100,
+            "position":[60, 30],
+            "fontsize":300,
             "fontcolor":[255,255,255],
             "gradient":[[255,166,0], [255,255,0]],
             "outlinecolor":[0,0,0],
-            "outlinesize":8,
+            "outlinesize":24,
             "bold":true
         },
         {
             "type":"textinput",
             "ref":"Thumbnail Text",
             "anchor":"bottomleft",
-            "position":[170, -20],
-            "fontsize":200,
+            "position":[510, -60],
+            "fontsize":600,
             "multilinelimit":true,
-            "maxwidth":1100,
+            "maxwidth":3300,
             "gradient":[[255,255,255], [255,255,0]],
             "bold":true
         }
@@ -202,35 +203,35 @@
         },
         {
             "type":"party",
-            "size":1.4,
+            "size":4.2,
             "anchor":"top",
-            "position":[-55, 100],
+            "position":[-165, 300],
             "noskin":true
         },
         {
             "type":"prideinput",
-            "size":1.2,
+            "size":3.6,
             "anchor":"bottomleft",
-            "position":[5, -5]
+            "position":[15, -15]
         },
         {
             "type":"autoinput",
-            "size":3,
+            "size":9,
             "anchor":"bottomleft",
-            "position":[200, -25]
+            "position":[600, -75]
         },
         {
             "type":"textinput",
             "ref":"Thumbnail Text",
             "anchor":"bottomright",
-            "position":[-15, -20],
-            "fontsize":200,
+            "position":[-45, -60],
+            "fontsize":600,
             "multilinelimit":true,
-            "maxwidth":840,
+            "maxwidth":2520,
             "bold":true,
             "outlinecolor":[255,0,0],
             "gradient":[[255,255,255], [255,255,0]],
-            "rotate":[358, [1280, 700]]
+            "rotate":[358, [3840, 2100]]
         }
     ],
     "Fate Episode": [
@@ -244,14 +245,14 @@
             "type":"textinput",
             "ref":"Thumbnail Text",
             "anchor":"bottomright",
-            "position":[-15, -20],
-            "fontsize":200,
+            "position":[-45, -60],
+            "fontsize":600,
             "multilinelimit":true,
-            "maxwidth":840,
+            "maxwidth":2520,
             "bold":true,
             "outlinecolor":[255,0,0],
             "gradient":[[255,255,255], [255,255,0]],
-            "rotate":[358, [1280, 700]]
+            "rotate":[358, [3840, 2100]]
         }
     ],
     "Boss Only": [
@@ -272,9 +273,18 @@
     "Party Only": [
         {
             "type":"party",
-            "size":1.4,
+            "size":4.2,
             "anchor":"top",
-            "position":[-55, 100],
+            "position":[-165, 300],
+            "noskin":true
+        }
+    ],
+    "Party Only (Babyl)": [
+        {
+            "type":"party",
+            "size":4.2,
+            "anchor":"top",
+            "position":[150, 180],
             "noskin":true
         }
     ]

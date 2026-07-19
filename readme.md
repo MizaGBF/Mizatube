@@ -54,7 +54,7 @@ Some command line arguments:
 - `-nc/--noclip`: Disable the clipboard read. Useful in conjunction with `-sp/--skipparty` and templates not requiring any Party data.  
 - `-dr/--dryrun`: Images won't be written to disk (for debugging).  
 - `-lb/--listbosses`: List the registered bosses.  
-- `-tb/--testboss NAME`: Test to generate a boss.  
+- `-tb/--testboss BOSS_NAME`: Test to generate a boss.  
 - `-cc/--cleancache`: Clear the cache folder.  
 - `-ex/--exit`: Exit after parsing the arguments, without running the script (To use, for example, with `-cc`, `-lb` or `-tb`).  
   

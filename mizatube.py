@@ -101,7 +101,7 @@ class V():
 
 # Constants
 IMAGE_SIZE : V = V(900, 1080)
-THUMBNAIL_SIZE : V = V(1280, 720)
+THUMBNAIL_SIZE : V = V(3840, 2160)
 GBF_SIZE : V = V(640, 654)
 CDN : str = "https://prd-game-a-granbluefantasy.akamaized.net/"
 
@@ -257,9 +257,8 @@ class IMG():
                 self.image.paste(other.image, offset, other.image)
 
     def paste_transparency(self : IMG, other : IMG, offset : V|tuple[int, int]) -> None:
-        alpha : IMG = IMG.new_canvas(V(self.image.size[0], self.image.size[1]))
-        alpha.paste(other, offset)
-        self.swap(self.alpha(alpha))
+        pos : tuple[int, int] = offset.i if isinstance(offset, V) else offset
+        self.image.alpha_composite(other.image, dest=pos)
 
     def crop(self : IMG, size : tuple[int, int]|tuple[int, int, int, int]) -> IMG:
         # depending on the tuple size
@@ -656,7 +655,6 @@ class CreateJSTimelineParser:
             
             temp : IMG = IMG.new_canvas(GBF_SIZE)
             temp.paste(cropped, (0, 0))
-            
             # apply alpha
             if parent_alpha < 1.0:
                 r, g, b, a = temp.image.split()
@@ -1218,7 +1216,7 @@ class LayoutArtifactVeryCompact(LayoutArtifactCompact):
 
 # Main class
 class Mizatube:
-    VERSION : str = "1.4"
+    VERSION : str = "1.5"
     BOOKMARK_VERSION : int = 3
     ANY_CHARACTER = {
         "3020072000", # Young cat
@@ -1497,11 +1495,11 @@ class Mizatube:
             await self.get(f"assets_en/img/sp/raid/bg/{boss_data["background"]}.jpg")
         )
         # resize it to fit the thumbnail
-        mod : float = 1280 / bg_img.image.size[0]
+        mod : float = THUMBNAIL_SIZE.x / bg_img.image.size[0]
         bg_img = bg_img.resize(V(bg_img.image.size[0] * mod, bg_img.image.size[0] * mod))
         # calculate and apply a crop to show somehow the middle part
-        y : int = (bg_img.image.size[1] // 2) - 360
-        bg_img = bg_img.crop((0, y, 1280, y + 720))
+        y : int = (bg_img.image.size[1] - THUMBNAIL_SIZE.y) // 2
+        bg_img = bg_img.crop((0, y, THUMBNAIL_SIZE.x, y + THUMBNAIL_SIZE.y))
         return bg_img
 
     async def make_boss(self : Mizatube, boss_data : dict) -> IMG|None:
@@ -1517,7 +1515,7 @@ class Mizatube:
             else:
                 suffix = ""
 
-            # make image (youtube wants 720p thumbnail usually)
+            # make image (youtube wants 4k thumbnail)
             img : IMG = IMG.new_canvas(THUMBNAIL_SIZE)
             # retrieve animation file
             cjs : str = (await self.get(f"assets_en/js/cjs/raid_appear_{eid}{suffix}.js")).decode('utf-8')
@@ -1535,7 +1533,7 @@ class Mizatube:
             render = IMG(Image.composite(render.image, grad.image, self.mask))
             # paste render
             img.paste_transparency(
-                render.resize(GBF_SIZE * (720 / (1.0 * GBF_SIZE.y))),
+                render.resize(GBF_SIZE * (THUMBNAIL_SIZE.y / (1.0 * GBF_SIZE.y))),
                 V(-5, 0)
             )
             
@@ -1547,10 +1545,11 @@ class Mizatube:
             try: # add the icon (if set)
                 if icon is not None:
                     ico_img : IMG = IMG(await self.get(f"assets_en/img/sp/assets/enemy/m/{icon}.png"))
-                    layer : IMG = IMG.new_canvas(THUMBNAIL_SIZE)
-                    # position: bottom left corner, off 15px
-                    layer.paste_transparency(ico_img, V(15, 720 - ico_img.image.size[1] - 15))
-                    img = img.alpha(layer)
+                    ico_img = ico_img.resize(V(ico_img.image.size[0], ico_img.image.size[1]) * 3)
+                    img.paste_transparency(
+                        ico_img,
+                        V(45, THUMBNAIL_SIZE.y - ico_img.image.size[1] - 45)
+                    )
             except Exception as e:
                 print(pexc(e))
             return img
@@ -1638,21 +1637,21 @@ class Mizatube:
             case "topleft":
                 position = V(0, 0)
             case "top":
-                position = V(640, 0)
+                position = V(THUMBNAIL_SIZE.x // 2, 0)
             case "topright":
-                position = V(1280, 0)
+                position = V(THUMBNAIL_SIZE.x, 0)
             case "right":
-                position = V(1280, 360)
+                position = V(THUMBNAIL_SIZE.x, THUMBNAIL_SIZE.y // 2)
             case "bottomright":
-                position = V(1280, 720)
+                position = V(THUMBNAIL_SIZE.x, THUMBNAIL_SIZE.y)
             case "bottom":
-                position = V(640, 720)
+                position = V(THUMBNAIL_SIZE.x // 2, THUMBNAIL_SIZE.y)
             case "bottomleft":
-                position = V(0, 720)
+                position = V(0, THUMBNAIL_SIZE.y)
             case "left":
-                position = V(0, 360)
+                position = V(0, THUMBNAIL_SIZE.y // 2)
             case "middle":
-                position = V(640, 360)
+                position = V(THUMBNAIL_SIZE.x // 2, THUMBNAIL_SIZE.y // 2)
         position = position + offset
         for asset in assets:
             size, path = await self.get_element_size(asset, display)
@@ -1861,31 +1860,43 @@ class Mizatube:
                 ratio, "partyicon", V(150, 85)
             )
 
-    # apply justifications and calculate bounds
+    # apply justifications and calculate offset and bounds
     def generate_text(
         self : Mizatube,
         text : str, font : ImageFont,
         fs : int, os : int, lj : int, rj : int
-    ) -> tuple[str, list[int]]:
+    ) -> tuple[str, V, V]:
         nl = text.split('\n')
-        size = [0, 0]
+        # apply text alignments
         for i in range(len(nl)):
             if lj > 0:
                 nl[i] = nl[i].ljust(lj)
             if rj > 0:
                 nl[i] = nl[i].rjust(rj)
-            s = font.getbbox(nl[i], stroke_width=os)
-            size[0] = max(size[0], s[2] - s[0])
-            size[1] += s[3] - s[1] + 10
-        # adjust
-        size[1] = int(size[1] * 1.15)
-        return '\n'.join(nl), size
+                
+        modified_text = '\n'.join(nl)
+
+        # create a dummy ImageDraw instance to access the bbox method
+        dummy_img = Image.new("L", (1, 1))
+        draw = ImageDraw.Draw(dummy_img)
+
+        # get the exact bounding box for the entire multi-line text
+        bbox = draw.multiline_textbbox(
+            (0, 0), 
+            modified_text, 
+            font=font, 
+            stroke_width=os
+        )
+        # clean up
+        dummy_img.close()
+        # return modified text, offset and size
+        return modified_text, V(-bbox[0], -bbox[1]), V(bbox[2] - bbox[0], bbox[3] - bbox[1])
 
     # get a text position on screen
     def get_text_position(
         self : Mizatube,
         anchor : str,
-        size : list[int],
+        size : tuple[int, int],
         offset : V|tuple = (0, 0)
     ) -> V:
         text_pos : V
@@ -1893,27 +1904,27 @@ class Mizatube:
             case "topleft":
                 text_pos = V(0, 0)
             case "top":
-                text_pos = V(640 - size[0] // 2, 0)
+                text_pos = V((THUMBNAIL_SIZE.x - size[0]) // 2, 0)
             case "topright":
-                text_pos = V(1280 - size[0], 0)
+                text_pos = V(THUMBNAIL_SIZE.x - size[0], 0)
             case "right":
-                text_pos = V(1280 - size[0], 360 - size[1] // 2)
+                text_pos = V(THUMBNAIL_SIZE.x - size[0], (THUMBNAIL_SIZE.y - size[1]) // 2)
             case "bottomright":
-                text_pos = V(1280 - size[0], 720 - size[1])
+                text_pos = V(THUMBNAIL_SIZE.x - size[0], THUMBNAIL_SIZE.y - size[1])
             case "bottom":
-                text_pos = V(640 - size[0] // 2, 720 - size[1])
+                text_pos = V((THUMBNAIL_SIZE.x - size[0]) // 2, THUMBNAIL_SIZE.y - size[1])
             case "bottomleft":
-                text_pos = V(0, 720 - size[1])
+                text_pos = V(0, THUMBNAIL_SIZE.y - size[1])
             case "left":
-                text_pos = V(0, 360 - size[1] // 2)
+                text_pos = V(0, (THUMBNAIL_SIZE.y - size[1]) // 2)
             case "middle":
-                text_pos = V(640 - size[0] // 2, 360 - size[1] // 2)
+                text_pos = V((THUMBNAIL_SIZE.x - size[0]) // 2, (THUMBNAIL_SIZE.y - size[1]) // 2)
         return text_pos + offset
 
     # generate a gradient (for texts)
     def generate_gradient(
         self : Mizatube,
-        position : V, size : list[int],
+        position : V, size : tuple[int, int],
         gcol1 : tuple[int, int, int], gcol2 : tuple[int, int, int]
     ) -> IMG:
         img : IMG = IMG.new_canvas(THUMBNAIL_SIZE)
@@ -1955,10 +1966,10 @@ class Mizatube:
             font_file += "i"
         font_file += ".ttf"
         font = self.load_thumbnail_font(font_file, fs)
-        _, size = self.generate_text(text.replace('\\n', '\n'), font, fs, os, lj, rj)
-        text_pos = self.get_text_position(anchor, size, offset)
+        _, _, text_size = self.generate_text(text.replace('\\n', '\n'), font, fs, os, lj, rj)
+        text_pos = self.get_text_position(anchor, text_size.i, offset)
         # generate a gradient
-        grad : IMG = self.generate_gradient(text_pos, size, gcol1, gcol2)
+        grad : IMG = self.generate_gradient(text_pos, text_size.i, gcol1, gcol2)
         # draw text with outline
         self.draw_thumbnail_text_standard(img, text, fc, oc, os, bold, italic, anchor, offset, fs, lj, rj)
         # paste gradient with text mask on top
@@ -1988,8 +1999,8 @@ class Mizatube:
             font_file += "i"
         font_file += ".ttf"
         font = self.load_thumbnail_font(font_file, fs)
-        text, size = self.generate_text(text, font, fs, os, lj, rj)
-        text_pos = self.get_text_position(anchor, size, offset)
+        text, text_offset, text_size = self.generate_text(text, font, fs, os, lj, rj)
+        text_pos = self.get_text_position(anchor, text_size.i, offset + text_offset)
         img.text(text_pos, text, fill=fc, font=font, stroke_width=os, stroke_fill=oc)
 
     # add the party to the image
@@ -1999,12 +2010,12 @@ class Mizatube:
             return
         fc : tuple[int, ...] = tuple(action.get('fontcolor', (255, 255, 255)))
         oc : tuple[int, ...]  = tuple(action.get('outlinecolor', (255, 0, 0)))
-        os : int = action.get('outlinesize', 10)
+        os : int = action.get('outlinesize', 30)
         bold : bool = action.get('bold', False)
         italic : bool = action.get('italic', False)
         anchor : str = action.get('anchor', 'middle')
         offset : tuple[int, int] = action.get('position', (0, 0))
-        fs : int = action.get('fontsize', 120)
+        fs : int = action.get('fontsize', 360)
         ll : int = action.get('lengthlimit', 0)
         if ll > 0:
             max_length : int = 0
@@ -2137,7 +2148,7 @@ class Mizatube:
     def thumbnail_select_boss(self : Mizatube, action : dict) -> None:
         self.load_bosses()
         while True:
-            print(f"Input the Boss Data you want to use (Leave blank to ignore)")
+            print("Input the Boss Data you want to use (Leave blank to ignore)")
             s = self.input().lower()
             if s == "":
                 break
@@ -3466,7 +3477,7 @@ class Mizatube:
         utility = parser.add_argument_group('utility', 'utility commands.')
         utility.add_argument('-dr', '--dryrun', help="images won't be written (for debugging)", action='store_const', const=True, default=False, metavar='')
         utility.add_argument('-lb', '--listbosses', help="list registered bosses", action='store_const', const=True, default=False, metavar='')
-        utility.add_argument('-tb', '--testboss', help="generate a boss image as a test", action='store', nargs=1, type=str, metavar='PATH')
+        utility.add_argument('-tb', '--testboss', help="generate a boss image as a test", action='store', nargs=1, type=str, metavar='BOSS_NAME')
         utility.add_argument('-cc', '--clearcache', help="clear the cache folder", action='store_const', const=True, default=False, metavar='')
         utility.add_argument('-ex', '--exit', help="exit after parsing the arguments, without running the script", action='store_const', const=True, default=False, metavar='')
         args : argparse.Namespace = parser.parse_args()

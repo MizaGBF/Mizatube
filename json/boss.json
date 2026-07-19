@@ -210,19 +210,19 @@
 "icon": "8105043"
 },
 "nm100": {
-"id": "8104563",
-"background": "event_377",
-"icon": "8104563"
+"id": "8105043",
+"background": "e053r_3",
+"icon": "8105043"
 },
 "nm150": {
-"id": "8104813",
-"background": "event_135",
-"icon": "8104813"
+"id": "8105043",
+"background": "f006r_1",
+"icon": "8105043"
 },
 "nm200": {
-"id": "8104813",
-"background": "event_27",
-"icon": "8104813"
+"id": "8105043",
+"background": "f006r_2",
+"icon": "8105043"
 },
 "cosmos": {
 "id": "8103673",
@@ -355,9 +355,9 @@
 "icon": "5101093"
 },
 "nm250": {
-"id": "8104813",
-"background": "event_117",
-"icon": "8104813"
+"id": "8105043",
+"background": "event_368",
+"icon": "8105043"
 },
 "exo sagi": {
 "id": "8104083",
