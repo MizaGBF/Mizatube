@@ -115,7 +115,7 @@ class Language(StrEnum):
 def read_clipboard() -> dict:
     return json.loads(pyperclip.paste())
 
-def pexc(e : Exception) -> str:
+def trace(e : Exception) -> str:
     return "".join(traceback.format_exception(type(e), e, e.__traceback__))
 
 """
@@ -1395,7 +1395,7 @@ class Mizatube:
                             with open("cache/" + b64encode(path.encode('utf-8')).decode('utf-8'), mode="wb") as f:
                                 f.write(io)
                         except Exception as e:
-                            print(pexc(e))
+                            print(trace(e))
                             pass
                     except:
                         pass
@@ -1551,10 +1551,10 @@ class Mizatube:
                         V(45, THUMBNAIL_SIZE.y - ico_img.image.size[1] - 45)
                     )
             except Exception as e:
-                print(pexc(e))
+                print(trace(e))
             return img
         except Exception as me:
-            print(pexc(me))
+            print(trace(me))
             return None
 
     async def draw_thumbnail_background(self : Mizatube, img : IMG, action : dict) -> None:
@@ -1750,7 +1750,7 @@ class Mizatube:
                     entries.append("1999999999")
         except Exception as e:
             print("An error occured while importing a party:")
-            print(pexc(e))
+            print(trace(e))
             raise Exception("Failed to import party data")
         # now, we add each element at the given position, on a different format depending on mode and babyl flag
         anchor = action.get('anchor', 'topleft')
@@ -3369,7 +3369,7 @@ class Mizatube:
         for t in tasks:
             result, exception = t.result()
             if not result:
-                print(pexc(exception))
+                print(trace(exception))
                 print("Process has been stopped")
                 return False
         print(f"Images generated in {end - start:.2f} seconds")
@@ -3385,7 +3385,7 @@ class Mizatube:
             else:
                 data = {"ver":self.BOOKMARK_VERSION, "lang":"en", "party":{}}
         except Exception as e:
-            print(pexc(e))
+            print(trace(e))
             print("An error occured")
             print("Did you click the bookmark?")
             return
@@ -3425,7 +3425,7 @@ class Mizatube:
             else:
                 print("Error: No compatible data in the clipboard.")
         except Exception as e:
-            print(pexc(e))
+            print(trace(e))
             print("An unexpected error occured")
 
     def list_bosses(self : Mizatube) -> None:
