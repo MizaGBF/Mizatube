@@ -1216,7 +1216,7 @@ class LayoutArtifactVeryCompact(LayoutArtifactCompact):
 
 # Main class
 class Mizatube:
-    VERSION : str = "1.5"
+    VERSION : str = "1.6"
     BOOKMARK_VERSION : int = 3
     ANY_CHARACTER = {
         "3020072000", # Young cat
@@ -1309,6 +1309,7 @@ class Mizatube:
         self.extra_summon : bool = False
         self.thumbnail_fonts : dict[tuple[str, int], ImageFont] = {}
         self.args : dict = {}
+        self.gbfal : dict[str, str] = {}
 
     def input(self : Mizatube, text : str = "") -> str:
         if "input" in self.args:
@@ -3413,6 +3414,8 @@ class Mizatube:
                             and self.input("Type 'y' and press return to make a thumbnail:").lower() == "y"
                         ):
                             await self.process_thumbnail(data)
+                if self.args.get("tags", False):
+                    self.generate_tags(data["party"])
             elif "id" in data:
                 async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=20)) as self.client:
                     data.pop("ver", None)
@@ -3456,7 +3459,116 @@ class Mizatube:
         folder : Path = Path("cache")
         if folder.exists() and folder.is_dir():
             shutil.rmtree(folder)
-            self.tasks.print("Cache folder cleared.")
+            print("Cache folder cleared.")
+
+    def load_gbfal(self : Mizatube, path : str) -> None:
+        try:
+            gbfal : Path = Path(path)
+            with open(gbfal, mode="r", encoding="utf-8") as f:
+                data = json.load(f)
+                self.gbfal = data["lookup"]
+            print("GBFAL lookup loaded.")
+        except Exception as e:
+            print("Failed to load GBFAL data.")
+            print(trace(e))
+
+    def get_summon_series_type(self : Mizatube, sum_id : str) -> str:
+        if sum_id in {"2040034000","2040028000","2040027000","2040020000","2040047000","2040046000"}:
+            return "magna,omega,マグナ"
+        elif sum_id in {"2040094000","2040100000","2040098000","2040084000","2040080000","2040090000"}:
+            return "primal,optimus,神石"
+        elif sum_id in {"2040446000","2040447000","2040451000","2040452000","2040453000","2040454000"}:
+            return "taboo,odious,禁禍"
+        else:
+            return ""
+
+    def get_gbfal_tags(self : Mizatube, mdata : str) -> str:
+        tags : list[str] = self.gbfal.get(mdata["id"], "").split("/")[1:]
+        names : list[str] = []
+        found : bool = False
+        for t in tags:
+            if t.startswith("n "):
+                names.append(t[2:].strip().lower())
+                found = True
+            elif t.startswith("c "):
+                for s in t[2:].strip().lower().split(" "):
+                    if s in ("grand", "holiday", "christmas", "halloween", "summer", "yukata", "formal", "collab", "fantasy"):
+                        names.append(s)
+        if found:
+            return ",".join(names)
+        else:
+            return mdata["name"].lower()
+
+    def generate_tags(self : Mizatube, party : dict) -> None:
+        try:
+            tags : list[str] = []
+            element_distribution : dict[str, int] = {}
+            team_type : list[str] = []
+            team_names : list[str] = []
+            for i, wpn in enumerate(party["deck"]["pc"]["weapons"].values()):
+                if wpn["master"] is None:
+                    continue
+                element_distribution[wpn["master"]["attribute"]] = element_distribution.get(wpn["master"]["attribute"], 0) + 1
+            for i, ally in enumerate(party["deck"]["npc"].values()):
+                if ally["master"] is None:
+                    continue
+                element_distribution[ally["master"]["attribute"]] = element_distribution.get(ally["master"]["attribute"], 0) + 2
+                team_names.append(self.get_gbfal_tags(ally["master"]))
+            for i, sum in enumerate(party["deck"]["pc"]["summons"].values()):
+                if sum["master"] is None:
+                    continue
+                element_distribution[sum["master"]["attribute"]] = element_distribution.get(sum["master"]["attribute"], 0) + 1
+                if i == 0:
+                    team_type.append(self.get_summon_series_type(sum["master"]["id"]))
+                team_names.append(self.get_gbfal_tags(sum["master"]))
+            if party["support_summon"] is not None:
+                supp_id : str = party["support_summon"].split("_", 1)[0]
+                team_type.append(self.get_summon_series_type(supp_id))
+                name : str = self.get_gbfal_tags({"id":supp_id,"name":""})
+                if name != "":
+                    team_names.append(name)
+            element : str = max(element_distribution, key=element_distribution.get, default=None)
+            if element is not None:
+                tags.append(
+                    {
+                        "1":"fire,火",
+                        "2":"water,水",
+                        "3":"earth,土",
+                        "4":"wind,風",
+                        "5":"light,光",
+                        "6":"dark,闇",
+                    }
+                    .get(element, "null")
+                )
+            match len(team_type):
+                case 1:
+                    if team_type[0] != "":
+                        tags.append(team_type[0])
+                case 2:
+                    if team_type[0] == team_type[1]:
+                        if team_type[0] != "":
+                            tags.append(team_type[0])
+                    else:
+                        if team_type[0] == "":
+                            tags.append(team_type[1])
+                        elif team_type[1] == "":
+                            tags.append(team_type[0])
+                        else:
+                            tags.extend(team_type)
+            tags.append(party["deck"]["pc"]["job"]["master"]["name"].lower())
+            tags.extend(team_names)
+            # removing dupes
+            d : dict = dict.fromkeys(tags)
+            d.pop("", None)
+            tags = list(d)
+            tags = ",".join(tags)
+            with open("tags.txt", mode="w", encoding="utf-8") as f:
+                f.write(tags)
+            print("tags.txt has been generated")
+        except Exception as e:
+            print("An error occured while generating tags.txt")
+            print(trace(e))
+        
 
     async def start(self : Mizatube) -> None:
         # parse parameters
@@ -3472,6 +3584,8 @@ class Mizatube:
         primary.add_argument('-i', '--input', help="set text inputs", nargs='+', default=None)
         primary.add_argument('-nt', '--nothumbnail', help="disable thumbnail prompt", action='store_const', const=True, default=False, metavar='')
         primary.add_argument('-sp', '--skipparty', help="skip party image generation to make only a thumbnail", action='store_const', const=True, default=False, metavar='')
+        primary.add_argument('-t', '--tags', help="generate Youtube tags", action='store_const', const=True, default=False, metavar='')
+        primary.add_argument('-al', '--gbfal', help="path to GBFAL data.json files", action='store', nargs=1, type=str, metavar='PATH')
         primary.add_argument('-nc', '--noclip', help="clipboard won't be read (For debugging or use with --nothumbnail)", action='store_const', const=True, default=False, metavar='')
         
         utility = parser.add_argument_group('utility', 'utility commands.')
@@ -3486,7 +3600,10 @@ class Mizatube:
             "nothumbnail":args.nothumbnail,
             "skipparty":args.skipparty,
             "noclip":args.noclip,
+            "tags":args.tags,
         }
+        if args.gbfal is not None:
+            self.load_gbfal(args.gbfal[0])
         if args.json is not None:
             self.args["json"] = args.json[0]
         if args.clearcache:

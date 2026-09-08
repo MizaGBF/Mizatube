@@ -44,6 +44,11 @@ A boss can be registered during thumbnail generation too by passing the same dat
 2. Press the bookmark.
 3. Run `mizatube.py`.  
   
+## Generate Youtube tags
+  
+Run `mizatube.py -t`. Tags will be written in `tags.txt`, ready to be copypasted.  
+For better tagging, you can add `-al PATH`, where `PATH` is the path to a [GBFAL](https://github.com/MizaGBF/GBFAL) `data.json` file.  
+  
 ## Advanced Command Line usages  
   
 Some command line arguments:  
