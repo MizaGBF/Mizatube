@@ -862,6 +862,8 @@ class LayoutSummon():
     extra_size : V
     extra_offset : V
     plus_offset : V
+    star_offset : V
+    star_size : V
     quick_offset : V
     quick_size : V
     support_position : V
@@ -880,8 +882,10 @@ class LayoutSummon():
         self.extra_size = self.sub_size
         self.extra_offset = self.sub_size
         self.plus_offset = V(-70, - 35)
-        self.quick_offset = V(5, 5)
-        self.quick_size = V(50, 50)
+        self.star_offset = V(2, 2)
+        self.star_size = V(40, 40)
+        self.quick_offset = V(2, 40)
+        self.quick_size = V(40, 40)
         self.support_position = self.extra_position + V(self.extra_size.x + 15, 0)
         self.support_size = self.main_size
 
@@ -1216,7 +1220,7 @@ class LayoutArtifactVeryCompact(LayoutArtifactCompact):
 
 # Main class
 class Mizatube:
-    VERSION : str = "1.6"
+    VERSION : str = "1.7"
     BOOKMARK_VERSION : int = 3
     ANY_CHARACTER = {
         "3020072000", # Young cat
@@ -2568,6 +2572,31 @@ class Mizatube:
                 (await self.fetch(f"assets_en/img/sp/assets/summon/{folder}/{summon_data["param"]["image_id"]}.jpg")).resize(size),
                 position
             )
+            if "level" in summon_data["param"]:
+                level : int = int(summon_data["param"]["level"])
+                star : str
+                if level > 240:
+                    star = "star_4_5"
+                elif level > 230:
+                    star = "star_4_4"
+                elif level > 220:
+                    star = "star_4_3"
+                elif level > 210:
+                    star = "star_4_2"
+                elif level > 200:
+                    star = "star_4_1"
+                elif level > 150:
+                    star = "star_3"
+                elif level > 80:
+                    star = "star_2"
+                elif level > 60:
+                    star = "star_1"
+                else:
+                    star = "star_0"
+                img.paste_transparency(
+                    (await self.fetch(f"file:assets/{star}.png")).resize(layout.star_size),
+                    position + layout.star_offset
+                )
             if summon_data["param"].get("quality", "0") != "0":
                 img.text(
                     position + size + layout.plus_offset,
