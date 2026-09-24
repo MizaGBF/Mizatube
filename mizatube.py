@@ -730,6 +730,7 @@ class LayoutPartyBase():
     skill_size : V
     skill_text_offset : V
     skill_text_line_height : int
+    skill_icon_size : V
     equipment_offset : V
     equipment_size : V
     bullet_offset : V
@@ -746,6 +747,7 @@ class LayoutPartyBase():
         self.name_offset = V.ZERO()
         self.show_name = False
         self.name_character_limit = 9
+        self.skill_icon_size = V(20, 20)
 
     def groups(self : LayoutPartyBase):
         index : int = 0
@@ -1220,7 +1222,7 @@ class LayoutArtifactVeryCompact(LayoutArtifactCompact):
 
 # Main class
 class Mizatube:
-    VERSION : str = "1.7"
+    VERSION : str = "1.8"
     BOOKMARK_VERSION : int = 3
     ANY_CHARACTER = {
         "3020072000", # Young cat
@@ -1313,6 +1315,7 @@ class Mizatube:
         self.extra_summon : bool = False
         self.thumbnail_fonts : dict[tuple[str, int], ImageFont] = {}
         self.args : dict = {}
+        self.skills : dict[str, str] = {}
         self.gbfal : dict[str, str] = {}
 
     def input(self : Mizatube, text : str = "") -> str:
@@ -1324,6 +1327,15 @@ class Mizatube:
                 return ""
         else:
             return input(text)
+
+    def load_skills(self : Mizatube) -> None:
+        try:
+            with open("json/skill_ico.json", mode="rb") as f:
+                self.skills = json.load(f)
+            if not isinstance(self.skills, dict):
+                raise Exception()
+        except:
+            self.skills = {}
 
     def load_fonts(self : Mizatube) -> None:
         match self.language:
@@ -2499,12 +2511,26 @@ class Mizatube:
         )
         for i, sk in enumerate(party["deck"]["pc"]["set_action"]):
             if len(sk) != 0:
+                skill_pos : V = (
+                    layout.skill_offset
+                    + layout.skill_text_offset
+                    + V(0, layout.skill_text_line_height * i)
+                )
+                if sk["set_action_id"] in self.skills:
+                    try:
+                        img.paste_transparency(
+                            (
+                                await self.fetch(
+                                    f"assets_en/img/sp/ui/icon/ability/m/{self.skills[sk["set_action_id"]]}.png"
+                                )
+                            ).resize(layout.skill_icon_size),
+                            skill_pos
+                        )
+                        skill_pos.x += layout.skill_icon_size.x + 1
+                    except:
+                        pass
                 img.text(
-                    (
-                        layout.skill_offset
-                        + layout.skill_text_offset
-                        + V(0, layout.skill_text_line_height * i)
-                    ).i,
+                    skill_pos.i,
                     sk["name"],
                     fill=self.WHITE,
                     font=self.font[1]
@@ -3381,6 +3407,8 @@ class Mizatube:
         if self.language != data["lang"] or self.font is None:
             self.language = data["lang"]
             self.load_fonts()
+        if self.args["skills"] and len(self.skills) == 0:
+            self.load_skills()
         # set flags
         self.extra_grid = len(data["party"]["deck"]["pc"]["weapons"]) > 10
         self.extra_summon = len(data["party"]["deck"]["pc"].get("sub_summons", {})) > 0
@@ -3613,6 +3641,7 @@ class Mizatube:
         primary.add_argument('-i', '--input', help="set text inputs", nargs='+', default=None)
         primary.add_argument('-nt', '--nothumbnail', help="disable thumbnail prompt", action='store_const', const=True, default=False, metavar='')
         primary.add_argument('-sp', '--skipparty', help="skip party image generation to make only a thumbnail", action='store_const', const=True, default=False, metavar='')
+        primary.add_argument('-sk', '--skills', help="read json/skill_ico.json to add skill icons", action='store_const', const=True, default=False, metavar='')
         primary.add_argument('-t', '--tags', help="generate Youtube tags", action='store_const', const=True, default=False, metavar='')
         primary.add_argument('-al', '--gbfal', help="path to GBFAL data.json files", action='store', nargs=1, type=str, metavar='PATH')
         primary.add_argument('-nc', '--noclip', help="clipboard won't be read (For debugging or use with --nothumbnail)", action='store_const', const=True, default=False, metavar='')
@@ -3628,6 +3657,7 @@ class Mizatube:
             "dry":args.dryrun,
             "nothumbnail":args.nothumbnail,
             "skipparty":args.skipparty,
+            "skills":args.skills,
             "noclip":args.noclip,
             "tags":args.tags,
         }

@@ -49,6 +49,16 @@ A boss can be registered during thumbnail generation too by passing the same dat
 Run `mizatube.py -t`. Tags will be written in `tags.txt`, ready to be copypasted.  
 For better tagging, you can add `-al PATH`, where `PATH` is the path to a [GBFAL](https://github.com/MizaGBF/GBFAL) `data.json` file.  
   
+## Subskill icons
+  
+Add `-sk` to enable skill icons.  
+Icon filenames are stored in `json/skill_ico.json`.  
+To update the file, you need two things:  
+1. The bookmarklet `skill_export.js`. Add it to your browser.  
+2. The script `skill_import.py`. Run it.  
+3. Go on the class screen or skill selection screen and use the bookmarklet. Then switch to the python console and press return to add the skills.  
+4. Repeat until you're done. Then input `quit`.  
+  
 ## Advanced Command Line usages  
   
 Some command line arguments:  
