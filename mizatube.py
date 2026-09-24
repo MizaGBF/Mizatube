@@ -2529,6 +2529,8 @@ class Mizatube:
                         skill_pos.x += layout.skill_icon_size.x + 1
                     except:
                         pass
+                elif self.args["skills"]:
+                    print(f"Warning: Skill {sk["set_action_id"]} icon is not registered")
                 img.text(
                     skill_pos.i,
                     sk["name"],
