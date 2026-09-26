@@ -1147,8 +1147,8 @@ class LayoutArtifact():
     portrait_size : V
     portrait_folder : str
     portrait_offset : V
-    arousal_icon_size : V
-    arousal_icon_offset : V
+    artifact_icon_size : V
+    artifact_icon_offset : V
     ring_size : V
     ring_offset : V
     skill_compact_mode : int
@@ -1171,8 +1171,8 @@ class LayoutArtifact():
         self.portrait_size = V(196, 408) * (self.size.y  / 408.0)
         self.portrait_folder = "f"
         self.portrait_offset = V(2, 0)
-        self.arousal_icon_size = V(60, 60)
-        self.arousal_icon_offset = self.portrait_size - self.arousal_icon_size
+        self.artifact_icon_size = V(60, 60)
+        self.artifact_icon_offset = self.portrait_size - self.artifact_icon_size
         self.ring_size = V(60, 60)
         self.ring_offset = self.portrait_offset
         self.skill_compact_mode = 0
@@ -1192,7 +1192,7 @@ class LayoutArtifactCompact(LayoutArtifact):
         self.offset = V(0, self.size.y)
         self.portrait_size = V(self.size.y, self.size.y)
         self.portrait_folder = "s"
-        self.arousal_icon_offset = self.portrait_size - self.arousal_icon_size
+        self.artifact_icon_offset = self.portrait_size - self.artifact_icon_size
         self.ring_offset = self.portrait_offset
         self.skill_compact_mode = 1
         self.skill_icon_size = V(40, 40)
@@ -1210,8 +1210,8 @@ class LayoutArtifactVeryCompact(LayoutArtifactCompact):
         self.offset = V(0, self.size.y)
         self.portrait_size = V(self.size.y, self.size.y)
         self.portrait_folder = "s"
-        self.arousal_icon_size = V(40, 40)
-        self.arousal_icon_offset = self.portrait_size - self.arousal_icon_size
+        self.artifact_icon_size = V(40, 40)
+        self.artifact_icon_offset = self.portrait_size - self.artifact_icon_size
         self.ring_size = V(40, 40)
         self.ring_offset = self.portrait_offset
         self.skill_compact_mode = 2
@@ -1222,7 +1222,7 @@ class LayoutArtifactVeryCompact(LayoutArtifactCompact):
 
 # Main class
 class Mizatube:
-    VERSION : str = "1.8"
+    VERSION : str = "1.9"
     BOOKMARK_VERSION : int = 3
     ANY_CHARACTER = {
         "3020072000", # Young cat
@@ -3264,12 +3264,14 @@ class Mizatube:
                 (await self.fetch(f"assets_en/img/sp/assets/npc/{layout.portrait_folder}/{chara_file}.png")).resize(layout.portrait_size),
                 position + layout.portrait_offset
             )
-        # Awakening
-        if chara_data["param"]["npc_arousal_form"] is not None:
+        # Artifact
+        try:
             img.paste_transparency(
-                (await self.fetch(f"assets_en/img/sp/ui/icon/npc_arousal_form/form_{chara_data["param"]["npc_arousal_form"]}.png")).resize(layout.arousal_icon_size),
-                position + layout.arousal_icon_offset
+                (await self.fetch(f"assets_en/img/sp/assets/artifact/s/{artifact_data["artifact"]["img"]}")).resize(layout.artifact_icon_size),
+                position + layout.artifact_icon_offset
             )
+        except:
+            print(f"Warning: Missing artifact icon for {chara_data["master"]["id"]}")
         # Ring
         if chara_data["param"]["has_npcaugment_constant"]:
             img.paste_transparency(
