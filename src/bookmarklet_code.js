@@ -119,9 +119,15 @@ else if (
 			let skills = [];
 			let elems = af[0].getElementsByClassName("prt-artifact-skill-item");
 			for (let i = 0; i < elems.length; ++i) {
+				let icon;
+				try{
+					icon = elems[i].getElementsByClassName("artifact-score-icon")[0].getElementsByTagName("img")[0].src;
+				} catch(err) {
+					icon = elems[i].getElementsByClassName("artifact-skill-icon")[0].getElementsByTagName("img")[0].src;
+				}
 				skills.push({
 					lvl: elems[i].getElementsByClassName("artifact-skill-level")[0].textContent,
-					icon: elems[i].getElementsByClassName("artifact-score-icon")[0].getElementsByTagName("img")[0].src,
+					icon: icon,
 					desc: elems[i].getElementsByClassName("artifact-skill-desc")[0].textContent,
 					value: elems[i].getElementsByClassName("artifact-skill-value")[0].textContent
 				});
