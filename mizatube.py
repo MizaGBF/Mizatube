@@ -899,6 +899,7 @@ class LayoutWeapon():
     bg_size : V
     main_position : V
     main_size : V
+    main_blessing_offset_y : int
     sub_position : V
     sub_size : V
     sub_offset : V
@@ -907,6 +908,9 @@ class LayoutWeapon():
     skill_text_offset : V
     plus_offset : V
     awakening_size : V
+    blessing_position : V
+    blessing_size : V
+    blessing_per_line : int
 
     def __init__(self : LayoutWeapon) -> None:
         self.max_weapon = 10
@@ -915,6 +919,7 @@ class LayoutWeapon():
         self.origin = V((IMAGE_SIZE.x - self.bg_size.x) // 2, 500)
         self.main_position = self.origin + V(15, 20) + V(0, 70)
         self.main_size = V(160, 340)
+        self.main_blessing_offset_y = 35
         self.sub_position = self.main_position - V(0, 70) + V(self.main_size.x + 15, 0)
         self.sub_size = V(166, 95)
         self.skill_size = V(40, 40)
@@ -923,6 +928,10 @@ class LayoutWeapon():
         self.sub_offset = self.sub_size + V(10, self.skill_size.y * 2)
         self.plus_offset = V(-60, -40)
         self.awakening_size = V(50, 50)
+        self.blessing_position = self.origin + V(15, 20)
+        tmp : int = self.main_size.x // 3
+        self.blessing_size = V(tmp, tmp)
+        self.blessing_per_line = 3
 
 class LayoutWeaponExtra(LayoutWeapon):
     def __init__(self : LayoutWeaponExtra) -> None:
@@ -932,6 +941,7 @@ class LayoutWeaponExtra(LayoutWeapon):
         self.origin = V(0, 500)
         self.main_position = self.origin + V(15, 20) + V(0, 70)
         self.sub_position = self.main_position - V(0, 70) + V(self.main_size.x + 15, 0)
+        self.blessing_position = self.origin + V(15, 20)
 
 @dataclass(slots=True)
 class LayoutEstimate():
@@ -2735,11 +2745,55 @@ class Mizatube:
             (await self.fetch("file:assets/bg_1.png")).resize(layout.bg_size),
             layout.origin
         )
+        # Draw solomonis blessing
+        blessing_count : int = 0
+        if isinstance(party["deck"]["blessing"], dict):
+            for blessing in party["deck"]["blessing"].values():
+                if blessing is not None and blessing.get("is_used", False):
+                    blessing_count += 1
+        if blessing_count > 0:
+            blessing_position : V = layout.blessing_position.copy()
+            blessing_index : int = 0
+            # # Draw blessing box
+            blessing_box_size : V = V(
+                layout.blessing_size.x * layout.blessing_per_line,
+                layout.blessing_size.y * (1 + ((blessing_count - 1) // layout.blessing_per_line))
+            )
+            img.paste(
+                (await self.fetch("file:assets/box.png")).ninepatch(blessing_box_size + layout.box_margin * 2, layout.box_margin),
+                layout.blessing_position - layout.box_margin
+            )
+            # draw individual blessing
+            for i, blessing in enumerate(party["deck"]["blessing"].values()):
+                if blessing["is_used"]:
+                    try:
+                        blessing_file : str = blessing["name"].lower().replace(" ", "")
+                        if blessing_file.startswith("the"):
+                            blessing_file = blessing_file[3:]
+                        img.paste_transparency(
+                            (await self.fetch(f"assets_en/img/sp/party/contexts/arcarum3/assets/icon/blessing/{blessing_file}.png")).resize(layout.blessing_size),
+                            blessing_position
+                        )
+                        blessing_index += 1
+                        if blessing_index % layout.blessing_per_line == 0:
+                            blessing_position.x = layout.blessing_position.x
+                            blessing_position.y += layout.blessing_size.y
+                        else:
+                            blessing_position.x += layout.blessing_size.x
+                    except:
+                        blessing_count -= 1
+                        print(f"Warning: Failed to draw blessing {blessing["blessing_id"]} {blessing["name"]}")
+        # Add offset if more than 3 blessings
+        off_by_blessing : V = (
+            V(0, layout.main_blessing_offset_y)
+            if blessing_count > 3
+            else V.ZERO()
+        )
         # Draw boxes
         # # Main
         img.paste(
             (await self.fetch("file:assets/box.png")).ninepatch(layout.main_size + V(0, layout.skill_size.y * 2) + layout.box_margin * 2, layout.box_margin),
-            layout.main_position - layout.box_margin
+            layout.main_position - layout.box_margin + off_by_blessing
         )
         # # Subs
         img.paste(
@@ -2761,7 +2815,7 @@ class Mizatube:
             position : V
             folder : str
             if i == 1:
-                position = layout.main_position.copy()
+                position = layout.main_position + off_by_blessing
                 size = layout.main_size
                 folder = "ls"
             else:
@@ -2804,6 +2858,12 @@ class Mizatube:
                 (await self.fetch(f"assets_en/img/sp/assets/weapon/{folder}/{weapon_data["param"]["image_id"]}.jpg")).resize(size),
                 position
             )
+            # Sealed
+            if weapon_data.get("is_position_locked", False):
+                img.paste_transparency(
+                    (await self.fetch("assets_en/img/sp/css_img/party/contexts/arcarum3/sealed/weapon.png")).resize(layout.sub_size),
+                    position + V(0, size.y - layout.sub_size.y * 0.75)
+                )
             # Plus marks
             if weapon_data["param"]["quality"] != "0":
                 img.text(
