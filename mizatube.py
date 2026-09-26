@@ -2588,6 +2588,42 @@ class Mizatube:
                     position.x += layout.bullet_size.x
 
 
+    async def draw_summon_uncap_star(
+        self : Mizatube,
+        img : IMG, position : V,
+        layout : LayoutSummon,
+        level : int, is_SR : bool
+    ):
+        star : str
+        if is_SR:
+            if level > 60:
+                star = "star_1"
+            else:
+                star = "star_0"
+        else:
+            if level > 240:
+                star = "star_4_5"
+            elif level > 230:
+                star = "star_4_4"
+            elif level > 220:
+                star = "star_4_3"
+            elif level > 210:
+                star = "star_4_2"
+            elif level > 200:
+                star = "star_4_1"
+            elif level > 150:
+                star = "star_3"
+            elif level > 100:
+                star = "star_2"
+            elif level > 80:
+                star = "star_1"
+            else:
+                star = "star_0"
+        img.paste_transparency(
+            (await self.fetch(f"file:assets/{star}.png")).resize(layout.star_size),
+            position + layout.star_offset
+        )
+
     async def draw_individual_summon(
         self : Mizatube,
         img : IMG, folder : str, summon_data : dict,
@@ -2611,29 +2647,10 @@ class Mizatube:
                 position
             )
             if "level" in summon_data["param"]:
-                level : int = int(summon_data["param"]["level"])
-                star : str
-                if level > 240:
-                    star = "star_4_5"
-                elif level > 230:
-                    star = "star_4_4"
-                elif level > 220:
-                    star = "star_4_3"
-                elif level > 210:
-                    star = "star_4_2"
-                elif level > 200:
-                    star = "star_4_1"
-                elif level > 150:
-                    star = "star_3"
-                elif level > 80:
-                    star = "star_2"
-                elif level > 60:
-                    star = "star_1"
-                else:
-                    star = "star_0"
-                img.paste_transparency(
-                    (await self.fetch(f"file:assets/{star}.png")).resize(layout.star_size),
-                    position + layout.star_offset
+                await self.draw_summon_uncap_star(
+                    img, position, layout,
+                    int(summon_data["param"]["level"]),
+                    summon_data["param"]["image_id"][2] == "3" # SR rarity: 303 - SSR rarity: 304
                 )
             if summon_data["param"].get("quality", "0") != "0":
                 img.text(
