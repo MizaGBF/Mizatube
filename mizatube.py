@@ -2882,7 +2882,7 @@ class Mizatube:
                     position + V(0, size.y - layout.sub_size.y * 0.75)
                 )
             # Plus marks
-            if weapon_data["param"]["quality"] != "0":
+            if isinstance(weapon_data["param"]["quality"], str) and weapon_data["param"]["quality"] != "0":
                 img.text(
                     position + size + layout.plus_offset,
                     f"+{weapon_data["param"]["quality"]}",
