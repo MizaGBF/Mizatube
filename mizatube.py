@@ -2652,6 +2652,13 @@ class Mizatube:
                     int(summon_data["param"]["level"]),
                     summon_data["param"]["image_id"][2] == "3" # SR rarity: 303 - SSR rarity: 304
                 )
+            # Sealed
+            if summon_data.get("is_position_locked", False):
+                img.paste_transparency(
+                    (await self.fetch("assets_en/img/sp/css_img/party/contexts/arcarum3/sealed/weapon.png")).resize(layout.sub_size),
+                    position + V(0, size.y - layout.sub_size.y * 0.75)
+                )
+            # plus marks
             if summon_data["param"].get("quality", "0") != "0":
                 img.text(
                     position + size + layout.plus_offset,
