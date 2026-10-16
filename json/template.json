@@ -159,14 +159,6 @@
     ],
     "Tower of Babyl": [
         {
-            "type":"asset",
-            "asset":"file:assets/tower_of_babyl_upscaled_4k.png",
-            "anchor":"topleft"
-        },
-        {
-            "type":"boss"
-        },
-        {
             "type":"party",
             "size":4.2,
             "anchor":"top",

@@ -707,6 +707,7 @@ class CreateJSTimelineParser:
 # Layout of the party images
 @dataclass(slots=True)
 class LayoutPartyBase():
+    is_babyl : bool
     party_size : int
     origin : V
     bg_size : V
@@ -738,6 +739,7 @@ class LayoutPartyBase():
     bullet_per_line : int
 
     def __init__(self : LayoutPartyBase) -> None:
+        self.is_babyl = False
         self.party_size = 6
         self.origin = V.ZERO()
         self.bg_size = V(IMAGE_SIZE.x, 300)
@@ -829,6 +831,7 @@ class LayoutPartyUnlimited(LayoutPartyNormal):
 class LayoutPartyBabyl(LayoutPartyUnlimited):
     def __init__(self : LayoutPartyBabyl) -> None:
         super().__init__()
+        self.is_babyl = True
         self.party_size = 12
         self.party_groups = [
             (self.origin + V(18, 25), 4, ""),
@@ -1232,7 +1235,7 @@ class LayoutArtifactVeryCompact(LayoutArtifactCompact):
 
 # Main class
 class Mizatube:
-    VERSION : str = "1.9"
+    VERSION : str = "1.10"
     BOOKMARK_VERSION : int = 3
     ANY_CHARACTER = {
         "3020072000", # Young cat
@@ -1396,6 +1399,9 @@ class Mizatube:
             with open(f"artifact/{chara_id}.json", mode="r", encoding="utf-8") as f:
                 self.artifact_cache[chara_id] = json.load(f)
                 return self.artifact_cache[chara_id]
+
+    def is_babyl_data(self : Mizatube, data : dict) -> bool:
+        return len(data) == 3
 
     async def fetch(self : Mizatube, path : str) -> IMG:
         if self.language == Language.japanese:
@@ -1720,7 +1726,7 @@ class Mizatube:
         mode : str
         nchara : int
         try:
-            if len(party["deck"]["npc"]) > 8:
+            if self.is_babyl_data(party["deck"]["npc"]):
                 mode = "babyl"
                 nchara = 11
             elif len(party["deck"]["npc"]) > 5:
@@ -1744,7 +1750,10 @@ class Mizatube:
             for i in range(1, nchara + 1):
                 if mainsummon:
                     break
-                chara_data : dict = party["deck"]["npc"][str(i)]
+                if mode == "babyl":
+                    chara_data : dict = party["deck"]["npc"][str(1 + i // 4)][str(1 + i % 4)]
+                else:
+                    chara_data : dict = party["deck"]["npc"][str(i)]
                 if chara_data["master"] is None:
                     entries.append("3999999999")
                     continue
@@ -2393,7 +2402,7 @@ class Mizatube:
     async def draw_party(self : Mizatube, img : IMG, party : dict) -> None:
         # Select layout
         layout : LayoutPartyBase
-        if len(party["deck"]["npc"]) > 8:
+        if self.is_babyl_data(party["deck"]["npc"]):
             layout = LayoutPartyBabyl()
         elif len(party["deck"]["npc"]) > 5:
             layout = LayoutPartyUnlimited()
@@ -2445,8 +2454,11 @@ class Mizatube:
                 
             else:
                 # Draw character
-                chara_data : dict = party["deck"]["npc"][str(i)]
-                if chara_data["master"] is None:
+                if layout.is_babyl:
+                    chara_data : dict = party["deck"]["npc"][str(1 + i // 4)][str(1 + i % 4)]
+                else:
+                    chara_data : dict = party["deck"]["npc"][str(i)]
+                if chara_data.get("master", None) is None:
                     img.paste(
                         (await self.fetch("assets_en/img/sp/tower/assets/npc/s/3999999999.jpg")).resize(layout.portrait_size),
                         position
@@ -3432,13 +3444,27 @@ class Mizatube:
     async def make_emp(self : Mizatube, party : dict) -> tuple[bool, Any]:
         try:
             img : IMG = IMG.new_canvas()
-            emps : dict = {}
-            for k, v in party["deck"]["npc"].items():
-                try:
-                    emps[k] = self.load_emp(v["master"]["id"])
-                except:
-                    pass
-            n_chara : int = len(emps.keys())
+            emps : list = []
+            if self.is_babyl_data(party["deck"]["npc"]):
+                for _, p in party["deck"]["npc"].items():
+                    for k, v in p.items():
+                        try:
+                            emps.append((
+                                self.load_emp(v["master"]["id"]),
+                                v
+                            ))
+                        except:
+                            pass
+            else:
+                for k, v in party["deck"]["npc"].items():
+                    try:
+                        emps.append((
+                            self.load_emp(v["master"]["id"]),
+                            v
+                        ))
+                    except:
+                        pass
+            n_chara : int = len(emps)
             layout : LayoutEMP
             if n_chara <= 5:
                 layout = LayoutEMP()
@@ -3447,8 +3473,8 @@ class Mizatube:
             else:
                 layout = LayoutEMPVeryCompact()
             position : V = layout.origin.copy()
-            for k, emp_data in emps.items():
-                await self.draw_individual_emp(img, layout, position, party["deck"]["npc"][k], emp_data, party)
+            for (emp_data, npc_data) in emps:
+                await self.draw_individual_emp(img, layout, position, npc_data, emp_data, party)
                 position += layout.offset
             img.save("output_emp.png", self.args["dry"])
             return (True, None)
@@ -3458,16 +3484,27 @@ class Mizatube:
     async def make_artifact(self : Mizatube, party : dict) -> tuple[bool, Any]:
         try:
             img : IMG = IMG.new_canvas()
-            artifacts : dict = {}
-            for k, v in party["deck"]["npc"].items():
-                try:
-                    artifact_data = self.load_artifact(v["master"]["id"])
-                    if "skills" not in artifact_data["artifact"]:
-                        continue
-                    artifacts[k] = artifact_data
-                except:
-                    pass
-            n_chara : int = len(artifacts.keys())
+            artifacts : list = []
+            if self.is_babyl_data(party["deck"]["npc"]):
+                for _, p in party["deck"]["npc"].items():
+                    for k, v in p.items():
+                        try:
+                            artifacts.append((
+                                self.load_artifact(v["master"]["id"]),
+                                v
+                            ))
+                        except:
+                            pass
+            else:
+                for k, v in party["deck"]["npc"].items():
+                    try:
+                        artifacts.append((
+                            self.load_artifact(v["master"]["id"]),
+                            v
+                        ))
+                    except:
+                        pass
+            n_chara : int = len(artifacts)
             layout : LayoutArtifact
             if n_chara <= 5:
                 layout = LayoutArtifact()
@@ -3476,8 +3513,8 @@ class Mizatube:
             else:
                 layout = LayoutArtifactVeryCompact()
             position : V = layout.origin.copy()
-            for k, artifact_data in artifacts.items():
-                await self.draw_individual_artifact(img, layout, position, party["deck"]["npc"][k], artifact_data, party)
+            for (artifact_data, npc_data) in artifacts:
+                await self.draw_individual_artifact(img, layout, position, npc_data, artifact_data, party)
                 position += layout.offset
             img.save("output_artifact.png", self.args["dry"])
             return (True, None)
