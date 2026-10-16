@@ -170,7 +170,7 @@
             "type":"party",
             "size":4.2,
             "anchor":"top",
-            "position":[150, 180],
+            "position":[150, 20],
             "noskin":true
         },
         {
@@ -189,8 +189,8 @@
             "type":"textinput",
             "ref":"Thumbnail Text",
             "anchor":"bottomleft",
-            "position":[510, -60],
-            "fontsize":600,
+            "position":[510, -100],
+            "fontsize":450,
             "multilinelimit":true,
             "maxwidth":3300,
             "gradient":[[255,255,255], [255,255,0]],
