@@ -234,6 +234,42 @@
             "rotate":[358, [3840, 2100]]
         }
     ],
+    "Evoking Solomonis": [
+        {
+            "type":"asset",
+            "asset":"file:assets/evoking_solomonis_upscaled_4k.png",
+            "anchor":"topleft"
+        },
+        {
+            "type":"party",
+            "size":4.2,
+            "anchor":"top",
+            "position":[-165, 300],
+            "noskin":true
+        },
+        {
+            "type":"textinput",
+            "ref":"Pledge Text",
+            "anchor":"topleft",
+            "position":[60, 30],
+            "fontsize":300,
+            "fontcolor":[255,255,255],
+            "outlinecolor":[180,0,255],
+            "outlinesize":24,
+            "bold":true
+        },
+        {
+            "type":"textinput",
+            "ref":"Thumbnail Text",
+            "anchor":"bottomleft",
+            "position":[310, -200],
+            "fontsize":450,
+            "multilinelimit":true,
+            "maxwidth":3300,
+            "gradient":[[255,255,255], [255,255,0]],
+            "bold":true
+        }
+    ],
     "Fate Episode": [
         {
             "type":"bossbg"
