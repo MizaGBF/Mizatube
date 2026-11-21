@@ -1235,7 +1235,7 @@ class LayoutArtifactVeryCompact(LayoutArtifactCompact):
 
 # Main class
 class Mizatube:
-    VERSION : str = "1.10"
+    VERSION : str = "1.11"
     BOOKMARK_VERSION : int = 3
     ANY_CHARACTER = {
         "3020072000", # Young cat
@@ -3489,8 +3489,11 @@ class Mizatube:
                 for _, p in party["deck"]["npc"].items():
                     for k, v in p.items():
                         try:
+                            artifact_data = self.load_artifact(v["master"]["id"])
+                            if len(artifact_data) == 0 or len(artifact_data["artifact"]) == 0:
+                                raise Exception()
                             artifacts.append((
-                                self.load_artifact(v["master"]["id"]),
+                                artifact_data,
                                 v
                             ))
                         except:
@@ -3498,8 +3501,11 @@ class Mizatube:
             else:
                 for k, v in party["deck"]["npc"].items():
                     try:
+                        artifact_data = self.load_artifact(v["master"]["id"])
+                        if len(artifact_data) == 0 or len(artifact_data["artifact"]) == 0:
+                            raise Exception()
                         artifacts.append((
-                            self.load_artifact(v["master"]["id"]),
+                            artifact_data,
                             v
                         ))
                     except:
