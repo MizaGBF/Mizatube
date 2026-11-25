@@ -114,28 +114,33 @@ else if (
 	};
 	try {
 		let af = document.getElementsByClassName("artifact-body");
-		if (af.length > 0) {
-			let img = af[0].getElementsByClassName("img-icon-body")[0].src;
-			let skills = [];
-			let elems = af[0].getElementsByClassName("prt-artifact-skill-item");
-			for (let i = 0; i < elems.length; ++i) {
-				let icon;
-				try{
-					icon = elems[i].getElementsByClassName("artifact-score-icon")[0].getElementsByTagName("img")[0].src;
-				} catch(err) {
-					icon = elems[i].getElementsByClassName("artifact-skill-icon")[0].getElementsByTagName("img")[0].src;
+		if(af.length > 0)
+		{
+			let ib = af[0].getElementsByClassName("img-icon-body");
+			if(ib.length > 0)
+			{
+				let img = ib[0].src;
+				let skills = [];
+				let elems = af[0].getElementsByClassName("prt-artifact-skill-item");
+				for (let i = 0; i < elems.length; ++i) {
+					let icon;
+					try{
+						icon = elems[i].getElementsByClassName("artifact-score-icon")[0].getElementsByTagName("img")[0].src;
+					} catch(err) {
+						icon = elems[i].getElementsByClassName("artifact-skill-icon")[0].getElementsByTagName("img")[0].src;
+					}
+					skills.push({
+						lvl: elems[i].getElementsByClassName("artifact-skill-level")[0].textContent,
+						icon: icon,
+						desc: elems[i].getElementsByClassName("artifact-skill-desc")[0].textContent,
+						value: elems[i].getElementsByClassName("artifact-skill-value")[0].textContent
+					});
 				}
-				skills.push({
-					lvl: elems[i].getElementsByClassName("artifact-skill-level")[0].textContent,
-					icon: icon,
-					desc: elems[i].getElementsByClassName("artifact-skill-desc")[0].textContent,
-					value: elems[i].getElementsByClassName("artifact-skill-value")[0].textContent
-				});
+				obj.artifact = {
+					img: img,
+					skills: skills
+				};
 			}
-			obj.artifact = {
-				img: img,
-				skills: skills
-			};
 		}
 		copyJsonToClipboard(obj);
 	} catch (error) {};
